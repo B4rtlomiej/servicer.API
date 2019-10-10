@@ -9,13 +9,13 @@ namespace servicer.API.Models
 
         [Required]
         [StringLength(50)]
-        public string Username { get; protected set; }
+        public string Username { get; set; }
 
         [Required]
-        public byte[] PasswordHash { get; protected set; }
+        public byte[] PasswordHash { get; set; }
 
         [Required]
-        public byte[] PasswordSalt { get; protected set; }
+        public byte[] PasswordSalt { get; set; }
 
         [Required]
         public DateTime Created { get; protected set; }
@@ -27,7 +27,7 @@ namespace servicer.API.Models
 
         public Person Person { get; protected set; }
 
-        protected User()
+        public User()
         {
         }
     }
