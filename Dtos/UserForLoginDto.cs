@@ -1,6 +1,4 @@
-using System.ComponentModel.DataAnnotations;
-
-namespace servicer.API.Controllers
+namespace servicer.API.Dtos
 {
     public class UserForLoginDto
     {
