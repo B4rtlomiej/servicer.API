@@ -18,14 +18,14 @@ namespace servicer.API.Models
         public byte[] PasswordSalt { get; set; }
 
         [Required]
-        public DateTime Created { get; protected set; }
+        public DateTime Created { get; set; }
 
         [Required]
-        public DateTime LastActive { get; protected set; }
+        public DateTime LastActive { get; set; }
 
-        public UserRole UserRole { get; protected set; }
+        public UserRole UserRole { get; set; }
 
-        public Person Person { get; protected set; }
+        public Person Person { get; set; }
 
         public User()
         {

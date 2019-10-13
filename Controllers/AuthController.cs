@@ -31,7 +31,7 @@ namespace servicer.API.Controllers
 
             if (await _repository.UserExists(userForRegisterDto.Username))
             {
-                return BadRequest("Username already exists.");
+                return BadRequest("Login zajęty.");
             }
 
             var userToCreate = new User
@@ -52,13 +52,14 @@ namespace servicer.API.Controllers
 
             if (userFromRepo == null)
             {
-                return Unauthorized();
+                return Unauthorized("Błędny login, lub hasło.");
             }
 
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, userFromRepo.Id.ToString()),
-                new Claim(ClaimTypes.Name, userFromRepo.Username)
+                new Claim(ClaimTypes.Name, userFromRepo.Username),
+                new Claim(ClaimTypes.Role, userFromRepo.UserRole.ToString())
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
