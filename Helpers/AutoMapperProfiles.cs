@@ -8,8 +8,16 @@ namespace servicer.API.Helpers
     {
         public AutoMapperProfiles()
         {
-            CreateMap<User, UserForListDto>();
-            CreateMap<User, UserForDetailDto>();
+            CreateMap<User, UserForListDto>()
+                .ForMember(dest => dest.UserRole, opt =>
+                {
+                    opt.MapFrom(src => src.UserRole.ToString());
+                });
+            CreateMap<User, UserForDetailDto>()
+                .ForMember(dest => dest.UserRole, opt =>
+                {
+                    opt.MapFrom(src => src.UserRole.ToString());
+                });
         }
     }
 }

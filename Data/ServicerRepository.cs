@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using servicer.API.Models;
 
 namespace servicer.API.Data
@@ -27,7 +28,9 @@ namespace servicer.API.Data
             // TODO: retrieve
             //var user = await _context.Users.Include(p => p.Photos).FirstOrDefaultAsync(user => user.Id == id);
 
-            return null;
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+
+            return user;
         }
 
         public async Task<IEnumerable<User>> GetUsers()
@@ -35,7 +38,9 @@ namespace servicer.API.Data
             // TODO: retrieve
             //var users = await _context.Users.Include(p => p.Photos).ToListAsync();
 
-            return null;
+            var users = await _context.Users.ToListAsync();
+
+            return users;
         }
 
         public async Task<bool> SaveAll()
