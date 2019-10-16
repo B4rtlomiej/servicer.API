@@ -18,6 +18,7 @@ namespace servicer.API.Helpers
                 {
                     opt.MapFrom(src => src.UserRole.ToString());
                 });
+            CreateMap<UserForRegisterDto, User>();
         }
     }
 }

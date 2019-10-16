@@ -1,4 +1,6 @@
+using System;
 using System.ComponentModel.DataAnnotations;
+using servicer.API.Models;
 
 namespace servicer.API.Dtos
 {
@@ -11,5 +13,17 @@ namespace servicer.API.Dtos
         [Required(ErrorMessage = "Hasło jest wymagane.")]
         [MinLength(4, ErrorMessage = "Hasło musi mieć co najmniej 4 znaki.")]
         public string Password { get; set; }
+
+        public DateTime Created { get; set; }
+
+        public DateTime LastActive { get; set; }
+
+        public Person Person { get; set; }
+
+        public UserForRegisterDto()
+        {
+            Created = DateTime.Now;
+            LastActive = DateTime.Now;
+        }
     }
 }

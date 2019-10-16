@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -17,10 +18,12 @@ namespace servicer.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthRepository _repository;
+        private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
-        public AuthController(IAuthRepository repository, IConfiguration configuration)
+        public AuthController(IAuthRepository repository, IMapper mapper, IConfiguration configuration)
         {
             _repository = repository;
+            _mapper = mapper;
             _configuration = configuration;
         }
 
@@ -34,15 +37,12 @@ namespace servicer.API.Controllers
                 return BadRequest("Login zajęty.");
             }
 
-            var userToCreate = new User
-            {
-                Username = userForRegisterDto.Username
-            };
+            var userToCreate = _mapper.Map<User>(userForRegisterDto);
 
             var createdUser = await _repository.Register(userToCreate, userForRegisterDto.Password);
+            var userToReturn = _mapper.Map<UserForDetailDto>(createdUser);
 
-            // TODO: fix to use created at route
-            return StatusCode(201);
+            return CreatedAtRoute("GetUser", new { controller = "Users", id = createdUser.Id }, userToReturn);
         }
 
         [HttpPost("login")]

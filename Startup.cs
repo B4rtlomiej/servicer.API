@@ -45,6 +45,7 @@ namespace servicer.API
                 });
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IServicerRepository, ServicerRepository>();
+            services.AddScoped<SetLastActive>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
