@@ -20,6 +20,8 @@ namespace servicer.API.Dtos
 
         public Person Person { get; set; }
 
+        public UserRole UserRole { get; set; }
+
         public UserForRegisterDto()
         {
             Created = DateTime.Now;
