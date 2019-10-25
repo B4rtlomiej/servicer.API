@@ -141,7 +141,7 @@ namespace servicer.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Ticket",
+                name: "Tickets",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -158,9 +158,9 @@ namespace servicer.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Ticket", x => x.Id);
+                    table.PrimaryKey("PK_Tickets", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Ticket_Items_ItemId",
+                        name: "FK_Tickets_Items_ItemId",
                         column: x => x.ItemId,
                         principalTable: "Items",
                         principalColumn: "Id",
@@ -202,9 +202,9 @@ namespace servicer.API.Migrations
                 {
                     table.PrimaryKey("PK_UserTicket", x => new { x.UserId, x.TicketId });
                     table.ForeignKey(
-                        name: "FK_UserTicket_Ticket_TicketId",
+                        name: "FK_UserTicket_Tickets_TicketId",
                         column: x => x.TicketId,
-                        principalTable: "Ticket",
+                        principalTable: "Tickets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -256,8 +256,8 @@ namespace servicer.API.Migrations
                 filter: "[UserId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Ticket_ItemId",
-                table: "Ticket",
+                name: "IX_Tickets_ItemId",
+                table: "Tickets",
                 column: "ItemId");
 
             migrationBuilder.CreateIndex(
@@ -281,7 +281,7 @@ namespace servicer.API.Migrations
                 name: "People");
 
             migrationBuilder.DropTable(
-                name: "Ticket");
+                name: "Tickets");
 
             migrationBuilder.DropTable(
                 name: "Users");

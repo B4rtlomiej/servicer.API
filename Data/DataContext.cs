@@ -20,6 +20,7 @@ namespace servicer.API.Data
         public DbSet<ProductSpecification> ProductSpecifications { get; set; }
         public DbSet<Note> Notes { get; set; }
         public DbSet<Item> Items { get; set; }
+        public DbSet<Ticket> Tickets { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

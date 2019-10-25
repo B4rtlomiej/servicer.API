@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace servicer.API.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ValuesController : ControllerBase

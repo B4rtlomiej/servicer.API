@@ -22,7 +22,7 @@ namespace servicer.API.Dtos
 
         public UserRole UserRole { get; set; }
 
-        public UserForRegisterDto()
+        public UserForRegisterDto(DateTime Created)
         {
             Created = DateTime.Now;
             LastActive = DateTime.Now;

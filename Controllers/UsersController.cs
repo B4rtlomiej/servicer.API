@@ -22,7 +22,7 @@ namespace servicer.API.Controllers
             _repository = repository;
             _mapper = mapper;
         }
-
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetUsers()
         {

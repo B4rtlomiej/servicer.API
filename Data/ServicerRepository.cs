@@ -47,5 +47,17 @@ namespace servicer.API.Data
         {
             return await _context.SaveChangesAsync() > 0;
         }
+
+        public async Task<IEnumerable<Ticket>> GetTickets()
+        {
+            var tickets = await _context.Tickets.ToListAsync();
+
+            return tickets;
+        }
+        public async Task<Ticket> GetTicket(int id)
+        {
+            var ticket = await _context.Tickets.FirstOrDefaultAsync(t => t.Id == id);
+            return ticket;
+        }
     }
 }

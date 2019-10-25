@@ -10,14 +10,14 @@ using servicer.API.Data;
 namespace servicer.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20191012195401_InitialCreate")]
+    [Migration("20191020221034_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
+                .HasAnnotation("ProductVersion", "2.2.2-servicing-10034")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -208,7 +208,7 @@ namespace servicer.API.Migrations
 
                     b.HasIndex("ItemId");
 
-                    b.ToTable("Ticket");
+                    b.ToTable("Tickets");
                 });
 
             modelBuilder.Entity("servicer.API.Models.User", b =>
