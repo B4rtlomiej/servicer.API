@@ -25,20 +25,19 @@ namespace servicer.API.Data
 
         public async Task<User> GetUser(int id)
         {
-            // TODO: retrieve
-            //var user = await _context.Users.Include(p => p.Photos).FirstOrDefaultAsync(user => user.Id == id);
-
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            var user = await _context.Users.Include(p => p.Person).FirstOrDefaultAsync(u => u.Id == id);
 
             return user;
         }
 
+        public async Task<User> GetInactiveUser(string username)
+        {
+            return await _context.Users.FirstOrDefaultAsync(x => x.Username == username && !x.IsActive);
+        }
+
         public async Task<IEnumerable<User>> GetUsers()
         {
-            // TODO: retrieve
-            //var users = await _context.Users.Include(p => p.Photos).ToListAsync();
-
-            var users = await _context.Users.ToListAsync();
+            var users = await _context.Users.Include(p => p.Person).ToListAsync();
 
             return users;
         }

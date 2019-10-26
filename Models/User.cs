@@ -11,11 +11,11 @@ namespace servicer.API.Models
         [StringLength(50)]
         public string Username { get; set; }
 
-        [Required]
         public byte[] PasswordHash { get; set; }
 
-        [Required]
         public byte[] PasswordSalt { get; set; }
+
+        public bool IsActive { get; set; }
 
         [Required]
         public DateTime Created { get; set; }
