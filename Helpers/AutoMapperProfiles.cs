@@ -18,7 +18,10 @@ namespace servicer.API.Helpers
                 {
                     opt.MapFrom(src => src.UserRole.ToString());
                 });
-            CreateMap<UserForRegisterDto, User>();
+            CreateMap<UserForRegisterDto, User>().ReverseMap();
+            CreateMap<Ticket, TicketForSendDto>().ReverseMap();
+            CreateMap<Ticket, TicketForListDto>().ReverseMap();
+            CreateMap<Ticket, TicketForDetailDto>().ReverseMap();
         }
     }
 }
