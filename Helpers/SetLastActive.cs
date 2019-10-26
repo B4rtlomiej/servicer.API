@@ -13,12 +13,15 @@ namespace servicer.API.Helpers
         {
             var result = await next();
 
-            var userId = int.Parse(result.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var repository = result.HttpContext.RequestServices.GetService<IServicerRepository>();
+            if (result.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier) != null)
+            {
+                var userId = int.Parse(result.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                var repository = result.HttpContext.RequestServices.GetService<IServicerRepository>();
 
-            var user = await repository.GetUser(userId);
-            user.LastActive = DateTime.Now;
-            await repository.SaveAll();
+                var user = await repository.GetUser(userId);
+                user.LastActive = DateTime.Now;
+                await repository.SaveAll();
+            }
         }
     }
 }
