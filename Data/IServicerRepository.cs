@@ -12,5 +12,9 @@ namespace servicer.API.Data
         Task<IEnumerable<User>> GetUsers();
         Task<User> GetUser(int id);
         Task<User> GetInactiveUser(string username);
+        Task<IEnumerable<Ticket>> GetTickets();
+        Task<Ticket> GetTicket(int id);
+        Task<Ticket> CreateTicket(Ticket ticket);
+        Task DeleteTicket(int id);
     }
 }
