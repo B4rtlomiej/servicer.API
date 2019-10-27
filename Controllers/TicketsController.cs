@@ -29,6 +29,8 @@ namespace servicer.API.Controllers
         public async Task<IActionResult> CreateTicket(TicketForSendDto ticketForSendDto)
         {
             var ticketToCreate = _mapper.Map<Ticket>(ticketForSendDto);
+            // TODO: fix
+            ticketToCreate.ItemId = 3;
             var createdTicket = await _repository.CreateTicket(ticketToCreate);
 
             var ticketToReturn = _mapper.Map<TicketForDetailDto>(createdTicket);
@@ -52,6 +54,16 @@ namespace servicer.API.Controllers
             var ticketToReturn = _mapper.Map<TicketForDetailDto>(ticket);
 
             return Ok(ticketToReturn);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteTicket(int id)
+        {
+            await _repository.DeleteTicket(id);
+
+            await _repository.SaveAll();
+
+            return Ok();
         }
     }
 }
