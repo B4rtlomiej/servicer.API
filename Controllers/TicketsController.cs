@@ -17,7 +17,6 @@ namespace servicer.API.Controllers
         private readonly IServicerRepository _repository;
         private readonly IMapper _mapper;
 
-
         public TicketsController(IServicerRepository repository, IMapper mapper)
         {
             _repository = repository;
@@ -32,7 +31,6 @@ namespace servicer.API.Controllers
             // TODO: fix
             ticketToCreate.ItemId = 3;
             var createdTicket = await _repository.CreateTicket(ticketToCreate);
-
             var ticketToReturn = _mapper.Map<TicketForDetailDto>(createdTicket);
 
             return CreatedAtRoute("GetTicket", new { controller = "Tickets", id = createdTicket.Id }, ticketToReturn);
@@ -60,7 +58,6 @@ namespace servicer.API.Controllers
         public async Task<IActionResult> DeleteTicket(int id)
         {
             await _repository.DeleteTicket(id);
-
             await _repository.SaveAll();
 
             return Ok();
