@@ -98,9 +98,9 @@ namespace servicer.API.Controllers
             );
 
             SendEmailMessage(userForRegisterDto.Person.Email, "Witamy w servicer", "<h1>Witaj " + userForRegisterDto.Person.FirstName + "</h1>"
-            + "<p>Aktywuj konto korzystająć z poniższego linka<br/></p>"
+            + "<p>Aktywuj konto korzystająć z poniższego linka:<br/></p>"
             + "<p><a href='http://localhost:4200/activate/" + confirmationToken + "'>Aktywuj konto</a></p>",
-            "Aktywuj konto korzystająć z poniższego linka\n localhost:5000/api/auth/register/auth/" + confirmationToken);
+            "Aktywuj konto korzystająć z poniższego linka:\n localhost:5000/api/auth/register/auth/" + confirmationToken);
 
             return Ok(new
             {

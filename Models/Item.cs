@@ -26,7 +26,6 @@ namespace servicer.API.Models
 
         public ICollection<Ticket> Tickets { get; set; }
 
-
         public Item()
         {
         }
