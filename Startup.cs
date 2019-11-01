@@ -20,6 +20,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using servicer.API.Data;
 using servicer.API.Helpers;
+using servicer.API.Services;
 
 namespace servicer.API
 {
@@ -45,6 +46,8 @@ namespace servicer.API
                 });
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IServicerRepository, ServicerRepository>();
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<SetLastActive>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>

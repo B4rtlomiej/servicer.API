@@ -55,12 +55,11 @@ namespace servicer.API.Data
 
             return user;
         }
-        public async Task<User> Activate(User user, string password)
+        public async Task<User> SetPassword(User user, string password)
         {
             byte[] passwordHash, passwordSalt;
             CreatePasswordHash(password, out passwordHash, out passwordSalt);
 
-            user.IsActive = true;
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
 

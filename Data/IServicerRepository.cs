@@ -11,6 +11,7 @@ namespace servicer.API.Data
         Task<bool> SaveAll();
         Task<IEnumerable<User>> GetUsers();
         Task<User> GetUser(int id);
+        Task<User> GetUser(string username);
         Task<User> GetInactiveUser(string username);
         Task<IEnumerable<Ticket>> GetTickets();
         Task<Ticket> GetTicket(int id);
