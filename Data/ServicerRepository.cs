@@ -47,6 +47,12 @@ namespace servicer.API.Data
             return users;
         }
 
+        public async Task ChangeIsActive(User user)
+        {
+            user.IsActive = !user.IsActive;
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<IEnumerable<Ticket>> GetTickets()
         {
             var tickets = await _context.Tickets.Include(t => t.Item).Include(c => c.Item.Customer).ToListAsync();
