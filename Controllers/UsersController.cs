@@ -56,17 +56,17 @@ namespace servicer.API.Controllers
         }
 
         [HttpPost("{id}/resetpassword")]
-        public async Task<IActionResult> ResetPassword(int id, TokenForPasswordResetDto tokenForPasswordReset)
+        public async Task<IActionResult> ResetPassword(int id, TokenDto tokenDto)
         {
-            var jsonToken = new JwtSecurityTokenHandler().ReadJwtToken(tokenForPasswordReset.Token);
+            var token = tokenDto.Token;
 
-            if (jsonToken.ValidTo < DateTime.Now.AddMinutes(1))
+            if (_tokenService.IsTokenExpired(token))
             {
                 return BadRequest("Token wygasł.");
             }
 
-            var tokenId = jsonToken.Claims.First(claim => claim.Type == "nameid").Value;
-            var tokenRole = jsonToken.Claims.First(claim => claim.Type == "role").Value;
+            var tokenId = _tokenService.GetTokenClaim(token, "nameid");
+            var tokenRole = _tokenService.GetTokenClaim(token, "role");
 
             var userToResetPassword = await _repository.GetUser(id);
 
@@ -92,6 +92,46 @@ namespace servicer.API.Controllers
             return Ok(new
             {
                 message = "Zresetowano hasło."
+            });
+        }
+
+        [HttpPost("{id}/changeisactive")]
+        public async Task<IActionResult> ChangeIsActive(int id, TokenDto tokenDto)
+        {
+            var token = tokenDto.Token;
+
+            if (_tokenService.IsTokenExpired(token))
+            {
+                return BadRequest("Token wygasł.");
+            }
+
+            var tokenRole = _tokenService.GetTokenClaim(token, "role");
+
+            if (tokenRole != UserRole.Admin.ToString())
+            {
+                return Unauthorized();
+            }
+
+            var userToUpdate = await _repository.GetUser(id);
+
+            var wasActive = userToUpdate.IsActive;
+            await _repository.ChangeIsActive(userToUpdate);
+
+            var emailSubject = wasActive ? "Dezaktywacja" : "Aktywacja";
+            emailSubject += " konta";
+            var emailMessage = "Twoje konto zostało ";
+            emailMessage += wasActive ? "dezaktywowane." : "aktywowane.";
+
+            _emailService.SendEmailMessage(
+                userToUpdate.Person.Email,
+                emailSubject,
+                "<h1>" + emailSubject + "</h1><p>" + emailMessage + "</p>",
+                emailMessage
+            );
+
+            return Ok(new
+            {
+                message = emailSubject
             });
         }
     }
