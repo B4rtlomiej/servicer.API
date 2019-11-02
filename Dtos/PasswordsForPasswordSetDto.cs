@@ -1,6 +1,6 @@
 namespace servicer.API.Dtos
 {
-    public class PasswordsForUserActivationDto
+    public class PasswordsForPasswordSetDto
     {
         public string Password { get; set; }
         public string ConfirmPassword { get; set; }

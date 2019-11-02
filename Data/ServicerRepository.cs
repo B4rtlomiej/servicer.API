@@ -30,6 +30,11 @@ namespace servicer.API.Data
             return user;
         }
 
+        public async Task<User> GetUser(string username)
+        {
+            return await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
+        }
+
         public async Task<User> GetInactiveUser(string username)
         {
             return await _context.Users.FirstOrDefaultAsync(x => x.Username == username && !x.IsActive);

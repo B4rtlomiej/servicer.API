@@ -8,6 +8,6 @@ namespace servicer.API.Data
         Task<User> Register(User user);
         Task<User> Login(string username, string password);
         Task<bool> UserExists(string username);
-        Task<User> Activate(User user, string password);
+        Task<User> SetPassword(User user, string password);
     }
 }
