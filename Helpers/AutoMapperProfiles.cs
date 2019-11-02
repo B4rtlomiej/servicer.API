@@ -9,6 +9,7 @@ namespace servicer.API.Helpers
         public AutoMapperProfiles()
         {
             CreateMap<User, UserForListDto>().ReverseMap();
+            CreateMap<User, UserForDetailDto>().ReverseMap();
             CreateMap<User, UserForRegisterDto>().ReverseMap();
             CreateMap<Ticket, TicketForSendDto>().ReverseMap();
             CreateMap<Ticket, TicketForListDto>().ReverseMap();
