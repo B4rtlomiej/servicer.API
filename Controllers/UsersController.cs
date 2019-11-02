@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -53,6 +51,25 @@ namespace servicer.API.Controllers
             var userToReturn = _mapper.Map<UserForDetailDto>(user);
 
             return Ok(userToReturn);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUser(int id, UserForUpdateDto userForUpdateDto)
+        {
+            if (id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)
+                && UserRole.Admin.ToString() != User.FindFirst(ClaimTypes.Role).Value.ToString())
+            {
+                return Unauthorized();
+            }
+
+            var userFromRepo = await _repository.GetUser(id);
+
+            _mapper.Map(userForUpdateDto, userFromRepo);
+
+            if (await _repository.SaveAll())
+                return NoContent();
+
+            throw new Exception($"Błąd przy edytowaniu użytkownika o id: {id}.");
         }
 
         [HttpPost("{id}/resetpassword")]

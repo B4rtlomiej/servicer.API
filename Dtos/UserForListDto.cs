@@ -11,7 +11,7 @@ namespace servicer.API.Dtos
 
         public DateTime LastActive { get; set; }
 
-        public String UserRole { get; set; }
+        public string UserRole { get; set; }
 
         public Person Person { get; set; }
     }
