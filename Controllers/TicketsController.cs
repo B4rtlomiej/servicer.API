@@ -6,6 +6,7 @@ using servicer.API.Dtos;
 using servicer.API.Models;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
+using System;
 
 namespace servicer.API.Controllers
 {
@@ -52,6 +53,21 @@ namespace servicer.API.Controllers
             var ticketToReturn = _mapper.Map<TicketForDetailDto>(ticket);
 
             return Ok(ticketToReturn);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateTicket(int id, TicketForUpdateDto ticketForUpdate)
+        {
+            // TODO: admin/manager/owner
+
+            var ticketFromRepo = await _repository.GetTicket(id);
+
+            _mapper.Map(ticketForUpdate, ticketFromRepo);
+
+            if (await _repository.SaveAll())
+                return NoContent();
+
+            throw new Exception($"Błąd przy edytowaniu zgłoszenia o id: {id}.");
         }
 
         [HttpDelete("{id}")]
