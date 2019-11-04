@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using servicer.API.Helpers;
 using servicer.API.Models;
 
 namespace servicer.API.Data
@@ -40,11 +42,11 @@ namespace servicer.API.Data
             return await _context.Users.FirstOrDefaultAsync(x => x.Username == username && !x.IsActive);
         }
 
-        public async Task<IEnumerable<User>> GetUsers()
+        public async Task<PagedList<User>> GetUsers(UserParams userParams)
         {
-            var users = await _context.Users.Include(p => p.Person).ToListAsync();
+            var users = _context.Users.Include(p => p.Person);
 
-            return users;
+            return await PagedList<User>.CreateAsync(users, userParams.PageNumber, userParams.PageSize);
         }
 
         public async Task ChangeIsActive(User user)
@@ -53,11 +55,12 @@ namespace servicer.API.Data
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Ticket>> GetTickets()
+        public async Task<PagedList<Ticket>> GetTickets(TicketParams ticketParams)
         {
-            var tickets = await _context.Tickets.Include(t => t.Item).Include(c => c.Item.Customer).ToListAsync();
+            var tickets =  _context.Tickets.Include(t => t.Item).Include(c => c.Item.Customer);
 
-            return tickets;
+
+            return await PagedList<Ticket>.CreateAsync(tickets, ticketParams.PageNumber, ticketParams.PageSize);
         }
 
         public async Task<Ticket> GetTicket(int id)

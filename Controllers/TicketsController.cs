@@ -7,6 +7,7 @@ using servicer.API.Models;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using System;
+using servicer.API.Helpers;
 
 namespace servicer.API.Controllers
 {
@@ -38,11 +39,14 @@ namespace servicer.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetTickets()
+        public async Task<IActionResult> GetTickets([FromQuery]TicketParams ticketParams)
         {
-            var tickets = await _repository.GetTickets();
+            var tickets = await _repository.GetTickets(ticketParams);
+            
             var ticketsToReturn = _mapper.Map<IEnumerable<TicketForListDto>>(tickets);
 
+            Response.AddPagination(tickets.CurrentPage, tickets.PageSize, tickets.TotalCount, tickets.TotalPages);
+            
             return Ok(ticketsToReturn);
         }
 
