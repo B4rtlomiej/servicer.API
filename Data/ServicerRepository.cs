@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -44,7 +45,10 @@ namespace servicer.API.Data
 
         public async Task<PagedList<User>> GetUsers(UserParams userParams)
         {
-            var users = _context.Users.Include(p => p.Person);
+            var users = _context.Users.Include(p => p.Person).AsQueryable();
+
+            if(!string.IsNullOrEmpty(userParams.userRole))
+                users = users.Where(u => u.UserRole.ToString() == userParams.userRole);    
 
             return await PagedList<User>.CreateAsync(users, userParams.PageNumber, userParams.PageSize);
         }
