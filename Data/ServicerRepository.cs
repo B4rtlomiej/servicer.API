@@ -47,8 +47,9 @@ namespace servicer.API.Data
         {
             var users = _context.Users.Include(p => p.Person).AsQueryable();
 
-            if(!string.IsNullOrEmpty(userParams.userRole))
-                users = users.Where(u => u.UserRole.ToString() == userParams.userRole);    
+            users = users.Where(u => u.UserRole == userParams.userRole);    
+            users = users.Where(u=> u.IsActive == userParams.isActive);
+
 
             return await PagedList<User>.CreateAsync(users, userParams.PageNumber, userParams.PageSize);
         }

@@ -1,3 +1,5 @@
+using servicer.API.Models;
+
 namespace servicer.API.Helpers
 {
     public class UserParams
@@ -11,7 +13,6 @@ namespace servicer.API.Helpers
             set { pageSize = (value > MaxPageSize) ? MaxPageSize : value; }
         }
         public bool isActive { get; set; }
-
-        public string userRole { get; set; }
+        public UserRole userRole { get; set; }
     }
 }
