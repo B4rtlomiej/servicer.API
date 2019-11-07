@@ -45,11 +45,15 @@ namespace servicer.API.Data
 
         public async Task<PagedList<User>> GetUsers(UserParams userParams)
         {
-            var users = _context.Users.Include(p => p.Person).AsQueryable();
+            var users = _context.Users.Include(p => p.Person).OrderByDescending(u => u.LastActive).AsQueryable();
 
-            users = users.Where(u => u.UserRole == userParams.userRole);    
-            users = users.Where(u=> u.IsActive == userParams.isActive);
+            users = users.Where(u => u.UserRole == userParams.userRole);
+            users = users.Where(u => u.IsActive == userParams.isActive);
 
+            if (userParams.orderBy == "lastActive")
+                users = users.OrderByDescending(u => u.LastActive);
+            if (userParams.orderBy == "lastCreated")
+                users = users.OrderByDescending(u => u.Created);
 
             return await PagedList<User>.CreateAsync(users, userParams.PageNumber, userParams.PageSize);
         }
@@ -62,8 +66,14 @@ namespace servicer.API.Data
 
         public async Task<PagedList<Ticket>> GetTickets(TicketParams ticketParams)
         {
-            var tickets =  _context.Tickets.Include(t => t.Item).Include(c => c.Item.Customer);
+            var tickets = _context.Tickets.Include(t => t.Item).Include(c => c.Item.Customer).AsQueryable();
 
+            tickets = tickets.Where(t => t.Priority == ticketParams.priority);
+            tickets = tickets.Where(t => t.Status == ticketParams.status);
+            if (ticketParams.orderBy == "lastOpen")
+                tickets = tickets.OrderByDescending(u => u.Created);
+            if (ticketParams.orderBy == "lastClosed")
+                tickets = tickets.OrderByDescending(u => u.Closed);
 
             return await PagedList<Ticket>.CreateAsync(tickets, ticketParams.PageNumber, ticketParams.PageSize);
         }

@@ -1,3 +1,5 @@
+using servicer.API.Models;
+
 namespace servicer.API.Helpers
 {
     public class TicketParams
@@ -10,5 +12,8 @@ namespace servicer.API.Helpers
             get { return pageSize; }
             set { pageSize = (value > MaxPageSize) ? MaxPageSize : value; }
         }
+        public Priority priority { get; set; }
+        public Status status { get; set; }
+        public string orderBy { get; set; }
     }
 }

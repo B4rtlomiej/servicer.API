@@ -12,7 +12,8 @@ namespace servicer.API.Helpers
             get { return pageSize; }
             set { pageSize = (value > MaxPageSize) ? MaxPageSize : value; }
         }
-        public bool isActive { get; set; }
+        public bool isActive { get; set; } = true;
         public UserRole userRole { get; set; }
+        public string orderBy { get; set; }
     }
 }
