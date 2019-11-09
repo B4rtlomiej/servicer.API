@@ -66,7 +66,7 @@ namespace servicer.API.Data
 
         public async Task<PagedList<Ticket>> GetTickets(TicketParams ticketParams)
         {
-            var tickets = _context.Tickets.Include(t => t.Item).Include(c => c.Item.Customer).AsQueryable();
+            var tickets = _context.Tickets.Include(t => t.Item).Include(ps => ps.Item.ProductSpecification).Include(c => c.Item.Customer).AsQueryable();
 
             tickets = tickets.Where(t => t.Priority == ticketParams.priority);
             tickets = tickets.Where(t => t.Status == ticketParams.status);
@@ -74,8 +74,7 @@ namespace servicer.API.Data
                 tickets = tickets.OrderByDescending(u => u.Created);
             if (ticketParams.orderBy == "lastClosed")
                 tickets = tickets.OrderByDescending(u => u.Closed);
-            var tickets = await _context.Tickets.Include(t => t.Item).Include(ps => ps.Item.ProductSpecification).Include(c => c.Item.Customer).ToListAsync();
-            
+
             return await PagedList<Ticket>.CreateAsync(tickets, ticketParams.PageNumber, ticketParams.PageSize);
         }
 
