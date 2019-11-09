@@ -1,6 +1,9 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using servicer.API.Helpers;
 using servicer.API.Models;
 
 namespace servicer.API.Data
@@ -40,11 +43,19 @@ namespace servicer.API.Data
             return await _context.Users.FirstOrDefaultAsync(x => x.Username == username && !x.IsActive);
         }
 
-        public async Task<IEnumerable<User>> GetUsers()
+        public async Task<PagedList<User>> GetUsers(UserParams userParams)
         {
-            var users = await _context.Users.Include(p => p.Person).ToListAsync();
+            var users = _context.Users.Include(p => p.Person).OrderByDescending(u => u.LastActive).AsQueryable();
 
-            return users;
+            users = users.Where(u => u.UserRole == userParams.userRole);
+            users = users.Where(u => u.IsActive == userParams.isActive);
+
+            if (userParams.orderBy == "lastActive")
+                users = users.OrderByDescending(u => u.LastActive);
+            if (userParams.orderBy == "lastCreated")
+                users = users.OrderByDescending(u => u.Created);
+
+            return await PagedList<User>.CreateAsync(users, userParams.PageNumber, userParams.PageSize);
         }
 
         public async Task ChangeIsActive(User user)
@@ -53,11 +64,18 @@ namespace servicer.API.Data
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Ticket>> GetTickets()
+        public async Task<PagedList<Ticket>> GetTickets(TicketParams ticketParams)
         {
-            var tickets = await _context.Tickets.Include(t => t.Item).Include(ps => ps.Item.ProductSpecification).Include(c => c.Item.Customer).ToListAsync();
+            var tickets = _context.Tickets.Include(t => t.Item).Include(ps => ps.Item.ProductSpecification).Include(c => c.Item.Customer).AsQueryable();
 
-            return tickets;
+            tickets = tickets.Where(t => t.Priority == ticketParams.priority);
+            tickets = tickets.Where(t => t.Status == ticketParams.status);
+            if (ticketParams.orderBy == "lastOpen")
+                tickets = tickets.OrderByDescending(u => u.Created);
+            if (ticketParams.orderBy == "lastClosed")
+                tickets = tickets.OrderByDescending(u => u.Closed);
+
+            return await PagedList<Ticket>.CreateAsync(tickets, ticketParams.PageNumber, ticketParams.PageSize);
         }
 
         public async Task<Ticket> GetTicket(int id)
