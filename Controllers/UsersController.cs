@@ -141,10 +141,15 @@ namespace servicer.API.Controllers
             var emailMessage = "Twoje konto zostało ";
             emailMessage += wasActive ? "dezaktywowane." : "aktywowane.";
 
+            if (!wasActive)
+            {
+                emailMessage = GetEmailMessageWithResetPasswordToken(emailMessage, userToUpdate);
+            }
+
             _emailService.SendEmailMessage(
                 userToUpdate.Person.Email,
                 emailSubject,
-                "<h1>" + emailSubject + "</h1><p>" + emailMessage + "</p>",
+                "<h1>" + emailSubject + "</h1>" + emailMessage,
                 emailMessage
             );
 
@@ -152,6 +157,21 @@ namespace servicer.API.Controllers
             {
                 message = emailSubject
             });
+        }
+
+        private string GetEmailMessageWithResetPasswordToken(string emailMessage, User user)
+        {
+            string resetPasswordToken = _tokenService.CreateToken(new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Role, user.UserRole.ToString())
+            }, DateTime.Now.AddDays(1));
+
+            emailMessage += "<p>Zresetuj hasło klikając w poniższy link:<br></p>"
+                + "<p><a href='http://localhost:4200/activate/" + resetPasswordToken + "'>Zresetuj hasło</a></p>";
+
+            return emailMessage;
         }
     }
 }
