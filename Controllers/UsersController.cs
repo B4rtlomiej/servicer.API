@@ -23,15 +23,13 @@ namespace servicer.API.Controllers
         private readonly IServicerRepository _repository;
         private readonly IEmailService _emailService;
         private readonly ITokenService _tokenService;
-        private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         public UsersController(IServicerRepository repository, IEmailService emailService,
-            ITokenService tokenService, IConfiguration configuration, IMapper mapper)
+            ITokenService tokenService, IMapper mapper)
         {
             _repository = repository;
             _emailService = emailService;
             _tokenService = tokenService;
-            _configuration = configuration;
             _mapper = mapper;
         }
 
