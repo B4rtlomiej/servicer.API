@@ -104,5 +104,28 @@ namespace servicer.API.Data
             var ticketToRemove = await GetTicket(id);
             _context.Tickets.Remove(ticketToRemove);
         }
+
+        public async Task<IEnumerable<ProductSpecification>> GetProductSpecifications()
+        {
+            var productSpecifications = await _context.ProductSpecifications.ToListAsync();
+
+            return productSpecifications;
+        }
+
+        public async Task<ProductSpecification> GetProductSpecification(int id)
+        {
+            var productSpecification = await _context.ProductSpecifications.FirstOrDefaultAsync(pS => pS.Id == id);
+
+            return productSpecification;
+        }
+
+        public async Task<ProductSpecification> CreateProductSpecification(ProductSpecification productSpecification)
+        {
+            productSpecification.IsActive = true;
+            await _context.ProductSpecifications.AddAsync(productSpecification);
+            await _context.SaveChangesAsync();
+
+            return productSpecification;
+        }
     }
 }

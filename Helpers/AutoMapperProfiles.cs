@@ -16,6 +16,10 @@ namespace servicer.API.Helpers
             CreateMap<Ticket, TicketForListDto>().ReverseMap();
             CreateMap<Ticket, TicketForDetailDto>().ReverseMap();
             CreateMap<Ticket, TicketForUpdateDto>().ReverseMap();
+            CreateMap<ProductSpecification, ProductSpecificationForListDto>().ReverseMap();
+            CreateMap<ProductSpecification, ProductSpecificationForDetailDto>().ReverseMap();
+            CreateMap<ProductSpecification, ProductSpecificationForSendDto>().ReverseMap();
+            CreateMap<ProductSpecification, ProductSpecificationForUpdateDto>().ReverseMap();
         }
     }
 }
