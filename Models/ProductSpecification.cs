@@ -19,6 +19,8 @@ namespace servicer.API.Models
         [StringLength(50)]
         public string Series { get; set; }
 
+        public bool IsActive { get; set; }
+
         public ICollection<Note> Notes { get; set; }
 
         public ICollection<Item> Items { get; set; }

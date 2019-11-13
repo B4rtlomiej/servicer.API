@@ -19,5 +19,8 @@ namespace servicer.API.Data
         Task<Ticket> GetTicket(int id);
         Task<Ticket> CreateTicket(Ticket ticket);
         Task DeleteTicket(int id);
+        Task<IEnumerable<ProductSpecification>> GetProductSpecifications();
+        Task<ProductSpecification> GetProductSpecification(int id);
+        Task<ProductSpecification> CreateProductSpecification(ProductSpecification productSpecification);
     }
 }
