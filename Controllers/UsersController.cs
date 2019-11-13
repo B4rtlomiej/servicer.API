@@ -156,7 +156,7 @@ namespace servicer.API.Controllers
                 message = emailSubject
             });
         }
-
+        
         private string GetEmailMessageWithResetPasswordToken(string emailMessage, User user)
         {
             string resetPasswordToken = _tokenService.CreateToken(new[]

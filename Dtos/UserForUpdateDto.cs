@@ -6,6 +6,6 @@ namespace servicer.API.Dtos
     {
         public string UserRole { get; set; }
 
-        public Person Person { get; set; }
+        public PersonForSendDto Person { get; set; }
     }
 }
