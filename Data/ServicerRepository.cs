@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -119,6 +120,25 @@ namespace servicer.API.Data
             return productSpecification;
         }
 
+        public async Task<int?> GetProductSpecificationId(string manufacturer, string series, string name)
+        {
+            var productSpecification = await _context.ProductSpecifications.FirstOrDefaultAsync(pS =>
+                pS.Manufacturer == manufacturer && pS.Series == series && pS.Name == name && pS.IsActive
+            );
+
+            int? id;
+            if (productSpecification != null)
+            {
+                id = productSpecification.Id;
+            }
+            else
+            {
+                id = null;
+            }
+
+            return id;
+        }
+
         public async Task<ProductSpecification> CreateProductSpecification(ProductSpecification productSpecification)
         {
             productSpecification.IsActive = true;
@@ -126,6 +146,44 @@ namespace servicer.API.Data
             await _context.SaveChangesAsync();
 
             return productSpecification;
+        }
+
+        public async Task<int?> GetCustomerId(string email, string firstName, string lastName)
+        {
+            var customer = await _context.Customers.FirstOrDefaultAsync(c =>
+                c.Person.Email == email && c.Person.FirstName == firstName && c.Person.LastName == lastName
+            );
+
+            int? id;
+            if (customer != null)
+            {
+                id = customer.Id;
+            }
+            else
+            {
+                id = null;
+            }
+
+            return id;
+        }
+
+        public async Task<int?> GetItemId(int productSpecificationId, int customerId, DateTime productionYear)
+        {
+            var item = await _context.Items.FirstOrDefaultAsync(i =>
+                i.ProductSpecificationId == productSpecificationId && i.CustomerId == customerId && i.ProductionYear == productionYear
+            );
+
+            int? id;
+            if (item != null)
+            {
+                id = item.Id;
+            }
+            else
+            {
+                id = null;
+            }
+
+            return id;
         }
     }
 }
