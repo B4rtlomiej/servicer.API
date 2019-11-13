@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using servicer.API.Helpers;
@@ -21,6 +22,9 @@ namespace servicer.API.Data
         Task DeleteTicket(int id);
         Task<IEnumerable<ProductSpecification>> GetProductSpecifications();
         Task<ProductSpecification> GetProductSpecification(int id);
+        Task<int?> GetProductSpecificationId(string manufacturer, string series, string name);
         Task<ProductSpecification> CreateProductSpecification(ProductSpecification productSpecification);
+        Task<int?> GetCustomerId(string email, string firstName, string lastName);
+        Task<int?> GetItemId(int productSpecificationId, int customerId, DateTime productionYear);
     }
 }

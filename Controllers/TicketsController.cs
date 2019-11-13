@@ -30,6 +30,40 @@ namespace servicer.API.Controllers
         public async Task<IActionResult> CreateTicket(TicketForSendDto ticketForSendDto)
         {
             var ticketToCreate = _mapper.Map<Ticket>(ticketForSendDto);
+            var productSpecificationId = await _repository.GetProductSpecificationId(
+                ticketToCreate.Item.ProductSpecification.Manufacturer,
+                ticketToCreate.Item.ProductSpecification.Series,
+                ticketToCreate.Item.ProductSpecification.Name
+            );
+
+            if (productSpecificationId == null)
+            {
+                return BadRequest("Wybrany produk nie istnieje, bądź nie jest aktywny.");
+            }
+
+            ticketToCreate.Item.ProductSpecificationId = (int)productSpecificationId;
+
+            var customerId = await _repository.GetCustomerId(
+                ticketToCreate.Item.Customer.Person.Email,
+                ticketToCreate.Item.Customer.Person.FirstName,
+                ticketToCreate.Item.Customer.Person.LastName
+            );
+
+            if (customerId != null)
+            {
+                ticketToCreate.Item.CustomerId = (int)customerId;
+
+                var itemId = await _repository.GetItemId(
+                    (int)productSpecificationId,
+                    (int)customerId,
+                    ticketToCreate.Item.ProductionYear
+                );
+
+                if (itemId != null)
+                {
+                    ticketToCreate.ItemId = (int)itemId;
+                }
+            }
 
             var createdTicket = await _repository.CreateTicket(ticketToCreate);
             var ticketToReturn = _mapper.Map<TicketForDetailDto>(createdTicket);

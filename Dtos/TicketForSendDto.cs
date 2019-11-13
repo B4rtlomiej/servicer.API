@@ -21,7 +21,7 @@ namespace servicer.API.Dtos
         [Required(ErrorMessage = "Opis jest wymagany.")]
         [MinLength(4, ErrorMessage = "Opis musi mieć co najmniej 20 znaków.")]
         public string Description { get; set; }
-        public int ItemId { get; set; }
+        public Item Item { get; set; }
 
         public TicketForSendDto()
         {
