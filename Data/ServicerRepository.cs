@@ -106,11 +106,16 @@ namespace servicer.API.Data
             _context.Tickets.Remove(ticketToRemove);
         }
 
-        public async Task<IEnumerable<ProductSpecification>> GetProductSpecifications()
+        public async Task<PagedList<ProductSpecification>> GetProductSpecifications(ProductSpecificationParams productParams)
         {
-            var productSpecifications = await _context.ProductSpecifications.ToListAsync();
+            var productSpecifications = _context.ProductSpecifications.AsQueryable();
 
-            return productSpecifications;
+             if (productParams.isActive == "active")
+                productSpecifications = productSpecifications.Where(p => p.IsActive == true);
+            if (productParams.isActive == "inactive")
+                productSpecifications = productSpecifications.Where(p => p.IsActive == false);
+
+            return await PagedList<ProductSpecification>.CreateAsync(productSpecifications, productParams.PageNumber, productParams.PageSize);
         }
 
         public async Task<ProductSpecification> GetProductSpecification(int id)

@@ -27,11 +27,13 @@ namespace servicer.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetProductSpecifications()
+        public async Task<IActionResult> GetProductSpecifications([FromQuery]ProductSpecificationParams productSpecificationParams)
         {
-            var productSpecifications = await _repository.GetProductSpecifications();
+            var productSpecifications = await _repository.GetProductSpecifications(productSpecificationParams);
+            
             var productSpecificationsToReturn = _mapper.Map<IEnumerable<ProductSpecificationForListDto>>(productSpecifications);
 
+            Response.AddPagination(productSpecifications.CurrentPage, productSpecifications.PageSize, productSpecifications.TotalCount, productSpecifications.TotalPages);
             return Ok(productSpecificationsToReturn);
         }
 
