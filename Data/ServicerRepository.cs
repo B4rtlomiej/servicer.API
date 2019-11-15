@@ -115,6 +115,15 @@ namespace servicer.API.Data
             if (productParams.isActive == "inactive")
                 productSpecifications = productSpecifications.Where(p => p.IsActive == false);
 
+            if(!string.IsNullOrEmpty(productParams.Name) && productParams.Name == "Name")
+                productSpecifications = productSpecifications.OrderByDescending(p =>p.Name);
+
+            if(!string.IsNullOrEmpty(productParams.Name) && productParams.Name == "Series")
+                productSpecifications = productSpecifications.OrderByDescending(p =>p.Series);
+                
+            if(!string.IsNullOrEmpty(productParams.Name) && productParams.Name == "Manufacturer")
+                productSpecifications = productSpecifications.OrderByDescending(p =>p.Manufacturer);
+
             return await PagedList<ProductSpecification>.CreateAsync(productSpecifications, productParams.PageNumber, productParams.PageSize);
         }
 
