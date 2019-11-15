@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using servicer.API.Helpers;
 using servicer.API.Models;
@@ -51,9 +50,9 @@ namespace servicer.API.Data
             users = users.Where(u => u.UserRole == userParams.userRole);
             users = users.Where(u => u.IsActive == userParams.isActive);
 
-            if (userParams.orderBy == "lastActive")
+            if (!string.IsNullOrEmpty(userParams.orderBy) && userParams.orderBy == "lastActive")
                 users = users.OrderByDescending(u => u.LastActive);
-            if (userParams.orderBy == "lastCreated")
+            if (!string.IsNullOrEmpty(userParams.orderBy) && userParams.orderBy == "lastCreated")
                 users = users.OrderByDescending(u => u.Created);
 
             return await PagedList<User>.CreateAsync(users, userParams.PageNumber, userParams.PageSize);
@@ -71,9 +70,9 @@ namespace servicer.API.Data
 
             tickets = tickets.Where(t => t.Priority == ticketParams.priority);
             tickets = tickets.Where(t => t.Status == ticketParams.status);
-            if (ticketParams.orderBy == "lastOpen")
+            if (!string.IsNullOrEmpty(ticketParams.orderBy) && ticketParams.orderBy == "lastOpen")
                 tickets = tickets.OrderByDescending(u => u.Created);
-            if (ticketParams.orderBy == "lastClosed")
+            if (!string.IsNullOrEmpty(ticketParams.orderBy) && ticketParams.orderBy == "lastClosed")
                 tickets = tickets.OrderByDescending(u => u.Closed);
 
             return await PagedList<Ticket>.CreateAsync(tickets, ticketParams.PageNumber, ticketParams.PageSize);
@@ -108,21 +107,40 @@ namespace servicer.API.Data
 
         public async Task<PagedList<ProductSpecification>> GetProductSpecifications(ProductSpecificationParams productParams)
         {
-            var productSpecifications = _context.ProductSpecifications.AsQueryable();
+            var productSpecifications = _context.ProductSpecifications.OrderBy(p =>p.Name).AsQueryable();
 
-             if (productParams.isActive == "active")
-                productSpecifications = productSpecifications.Where(p => p.IsActive == true);
-            if (productParams.isActive == "inactive")
-                productSpecifications = productSpecifications.Where(p => p.IsActive == false);
+            if (!string.IsNullOrEmpty(productParams.isActive))
+            {
+                if (productParams.isActive == "active")                
+                    productSpecifications = productSpecifications.Where(p => p.IsActive == true);
+                else
+                    productSpecifications = productSpecifications.Where(p => p.IsActive == false);
+            }
+            
 
-            if(!string.IsNullOrEmpty(productParams.Name) && productParams.Name == "Name")
-                productSpecifications = productSpecifications.OrderByDescending(p =>p.Name);
+            if(!string.IsNullOrEmpty(productParams.column) && productParams.column == "name" && !string.IsNullOrEmpty(productParams.sorting))
+            {
+                if(productParams.sorting =="ascending")
+                    productSpecifications = productSpecifications.OrderBy(p =>p.Name);
+                else
+                    productSpecifications = productSpecifications.OrderByDescending(p =>p.Name);
+            }
 
-            if(!string.IsNullOrEmpty(productParams.Name) && productParams.Name == "Series")
-                productSpecifications = productSpecifications.OrderByDescending(p =>p.Series);
-                
-            if(!string.IsNullOrEmpty(productParams.Name) && productParams.Name == "Manufacturer")
-                productSpecifications = productSpecifications.OrderByDescending(p =>p.Manufacturer);
+            if(!string.IsNullOrEmpty(productParams.column) && productParams.column == "series" && !string.IsNullOrEmpty(productParams.sorting))
+            {
+                if(productParams.sorting =="ascending")
+                    productSpecifications = productSpecifications.OrderBy(p =>p.Series);
+                else
+                    productSpecifications = productSpecifications.OrderByDescending(p =>p.Series);
+            }
+
+            if(!string.IsNullOrEmpty(productParams.column) && productParams.column == "manufacturer" && !string.IsNullOrEmpty(productParams.sorting))
+            {
+                if(productParams.sorting =="ascending")
+                    productSpecifications = productSpecifications.OrderBy(p =>p.Manufacturer);
+                else
+                    productSpecifications = productSpecifications.OrderByDescending(p =>p.Manufacturer);
+            }
 
             return await PagedList<ProductSpecification>.CreateAsync(productSpecifications, productParams.PageNumber, productParams.PageSize);
         }

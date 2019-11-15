@@ -14,6 +14,6 @@ namespace servicer.API.Helpers
         }
         public bool isActive { get; set; } = true;
         public UserRole userRole { get; set; }
-        public string orderBy { get; set; }
+        public string orderBy { get; set; } = "lastActive";
     }
 }
