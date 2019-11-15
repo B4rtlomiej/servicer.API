@@ -199,5 +199,27 @@ namespace servicer.API.Data
 
             return id;
         }
+
+        public async Task<IEnumerable<Note>> GetNotes()
+        {
+            var notes = await _context.Notes.ToListAsync();
+
+            return notes;
+        }
+
+        public async Task<Note> GetNote(int id)
+        {
+            var note = await _context.Notes.FirstOrDefaultAsync(n => n.Id == id);
+
+            return note;
+        }
+
+        public async Task<Note> CreateNote(Note note)
+        {
+            await _context.Notes.AddAsync(note);
+            await _context.SaveChangesAsync();
+
+            return note;
+        }
     }
 }

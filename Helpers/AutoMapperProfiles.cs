@@ -20,6 +20,10 @@ namespace servicer.API.Helpers
             CreateMap<ProductSpecification, ProductSpecificationForDetailDto>().ReverseMap();
             CreateMap<ProductSpecification, ProductSpecificationForSendDto>().ReverseMap();
             CreateMap<ProductSpecification, ProductSpecificationForUpdateDto>().ReverseMap();
+            CreateMap<Note, NoteForListDto>().ReverseMap();
+            CreateMap<Note, NoteForDetailDto>().ReverseMap();
+            CreateMap<Note, NoteForSendDto>().ReverseMap();
+            CreateMap<Note, NoteForUpdateDto>().ReverseMap();
         }
     }
 }

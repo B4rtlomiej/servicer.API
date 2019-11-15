@@ -13,6 +13,10 @@ namespace servicer.API.Models
 
         public int? ProductSpecificationId { get; set; }
 
+        public Item Item { get; set; }
+
+        public int? ItemId { get; set; }
+
         public Customer Customer { get; set; }
 
         public int? CustomerId { get; set; }

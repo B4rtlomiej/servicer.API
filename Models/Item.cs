@@ -19,6 +19,8 @@ namespace servicer.API.Models
 
         public ICollection<Ticket> Tickets { get; set; }
 
+        public ICollection<Note> Notes { get; set; }
+
         public Item()
         {
         }
