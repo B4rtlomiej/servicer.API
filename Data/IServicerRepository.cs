@@ -26,5 +26,8 @@ namespace servicer.API.Data
         Task<ProductSpecification> CreateProductSpecification(ProductSpecification productSpecification);
         Task<int?> GetCustomerId(string email, string firstName, string lastName);
         Task<int?> GetItemId(int productSpecificationId, int customerId, DateTime productionYear);
+        Task<IEnumerable<Note>> GetNotes();
+        Task<Note> GetNote(int id);
+        Task<Note> CreateNote(Note note);
     }
 }
