@@ -20,7 +20,7 @@ namespace servicer.API.Data
         Task<Ticket> GetTicket(int id);
         Task<Ticket> CreateTicket(Ticket ticket);
         Task DeleteTicket(int id);
-        Task<IEnumerable<ProductSpecification>> GetProductSpecifications();
+        Task<PagedList<ProductSpecification>> GetProductSpecifications(ProductSpecificationParams productParams);
         Task<ProductSpecification> GetProductSpecification(int id);
         Task<int?> GetProductSpecificationId(string manufacturer, string series, string name);
         Task<ProductSpecification> CreateProductSpecification(ProductSpecification productSpecification);
