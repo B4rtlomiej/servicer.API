@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace servicer.API.Models
@@ -27,11 +26,13 @@ namespace servicer.API.Models
         [Required]
         public string Description { get; set; }
 
-        public ICollection<UserTicket> UserTickets { get; set; }
-
         public Item Item { get; set; }
 
         public int ItemId { get; set; }
+
+        public User User { get; set; }
+
+        public int? UserId { get; set; }
 
         public Ticket()
         {

@@ -26,13 +26,5 @@ namespace servicer.API.Data
         {
             optionsBuilder.UseSqlServer(_config.GetConnectionString("DevelopmentConnection"));
         }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<UserTicket>()
-                .HasKey(u => new { u.UserId, u.TicketId });
-        }
-
-
     }
 }
