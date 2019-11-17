@@ -24,6 +24,7 @@ namespace servicer.API.Helpers
             CreateMap<Note, NoteForDetailDto>().ReverseMap();
             CreateMap<Note, NoteForSendDto>().ReverseMap();
             CreateMap<Note, NoteForUpdateDto>().ReverseMap();
+            CreateMap<Person, PersonForDetailDto>().ReverseMap();
         }
     }
 }

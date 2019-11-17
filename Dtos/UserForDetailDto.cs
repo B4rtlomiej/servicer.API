@@ -15,6 +15,6 @@ namespace servicer.API.Dtos
 
         public string UserRole { get; set; }
 
-        public Person Person { get; protected set; }
+        public PersonForDetailDto Person { get; protected set; }
     }
 }
