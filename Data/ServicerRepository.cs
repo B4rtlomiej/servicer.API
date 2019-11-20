@@ -66,7 +66,14 @@ namespace servicer.API.Data
 
         public async Task<PagedList<Ticket>> GetTickets(TicketParams ticketParams)
         {
-            var tickets = _context.Tickets.Include(t => t.Item).Include(ps => ps.Item.ProductSpecification).Include(c => c.Item.Customer).AsQueryable();
+            var tickets = _context.Tickets
+                                    .Include(t => t.Item)
+                                    .Include(ps => ps.Item.ProductSpecification)
+                                    .Include(c => c.Item.Customer)
+                                    .Include(u => u.User ).AsQueryable();
+            
+            if (ticketParams.UserId != null)
+                tickets = tickets.Where(u => u.UserId == Convert.ToInt32(ticketParams.UserId));                       
 
             tickets = tickets.Where(t => t.Priority == ticketParams.priority);
             tickets = tickets.Where(t => t.Status == ticketParams.status);
@@ -238,6 +245,30 @@ namespace servicer.API.Data
             await _context.SaveChangesAsync();
 
             return note;
+        }
+        public async Task ChangeOwnerTicket(Ticket ticket, int UserId)
+        {
+            ticket.UserId = UserId;
+            await _context.SaveChangesAsync();
+        }
+        public async Task SetStatus(Ticket ticket)
+        {
+            ticket.Status = (Status)1;
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<string> GetEmailAddressByItemId(int id)
+        {
+            var customerId =  _context.Items.FirstOrDefault(i =>i.Id == id).CustomerId;
+            var emailAddress =  _context.People.FirstOrDefault(c => c.CustomerId == customerId).Email;
+            return emailAddress;
+        }
+
+        public async Task CloseTicket(Ticket ticket)
+        {
+            ticket.Status = (Status)2;
+            ticket.Closed = DateTime.Today.ToLocalTime();
+            await _context.SaveChangesAsync();
         }
     }
 }

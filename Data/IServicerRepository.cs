@@ -29,5 +29,9 @@ namespace servicer.API.Data
         Task<IEnumerable<Note>> GetNotes();
         Task<Note> GetNote(int id);
         Task<Note> CreateNote(Note note);
+        Task ChangeOwnerTicket(Ticket ticket, int UserId);
+        Task SetStatus(Ticket ticket);
+        Task<string> GetEmailAddressByItemId(int id);
+        Task CloseTicket(Ticket ticket);
     }
 }

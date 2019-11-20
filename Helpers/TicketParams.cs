@@ -15,5 +15,9 @@ namespace servicer.API.Helpers
         public Priority priority { get; set; }
         public Status status { get; set; }
         public string orderBy { get; set; } =  "lastOpen";
+
+        public string UserId { get; set; }
+
+        public int isviewmytickets { get; set; } = 1;
     }
 }

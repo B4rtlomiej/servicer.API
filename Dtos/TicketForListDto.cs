@@ -1,6 +1,5 @@
 using System;
 using servicer.API.Models;
-using Type = servicer.API.Models.Type;
 
 namespace servicer.API.Dtos
 {
@@ -12,5 +11,6 @@ namespace servicer.API.Dtos
         public DateTime Created { get; set; }
         public string Subject { get; set; }
         public Item Item { get; set; }
+        public User User { get; set; }
     }
 }

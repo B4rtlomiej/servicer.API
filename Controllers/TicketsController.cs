@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using System;
 using servicer.API.Helpers;
+using servicer.API.Services;
+using System.Security.Claims;
 
 namespace servicer.API.Controllers
 {
@@ -18,11 +20,15 @@ namespace servicer.API.Controllers
     {
         private readonly IServicerRepository _repository;
         private readonly IMapper _mapper;
+        private readonly ITokenService _tokenService;
+        private readonly IEmailService _emailService;
 
-        public TicketsController(IServicerRepository repository, IMapper mapper)
+        public TicketsController(IServicerRepository repository, IMapper mapper, ITokenService tokenService, IEmailService emailService)
         {
             _repository = repository;
             _mapper = mapper;
+            _tokenService = tokenService;
+             _emailService = emailService;
         }
 
         [AllowAnonymous]
@@ -38,7 +44,7 @@ namespace servicer.API.Controllers
 
             if (productSpecificationId == null)
             {
-                return BadRequest("Wybrany produk nie istnieje, bądź nie jest aktywny.");
+                return BadRequest("Wybrany produkt nie istnieje, bądź nie jest aktywny.");
             }
 
             ticketToCreate.Item.ProductSpecificationId = (int)productSpecificationId;
@@ -70,10 +76,13 @@ namespace servicer.API.Controllers
 
             return CreatedAtRoute("GetTicket", new { controller = "Tickets", id = createdTicket.Id }, ticketToReturn);
         }
-
+        
         [HttpGet]
         public async Task<IActionResult> GetTickets([FromQuery]TicketParams ticketParams)
         {
+            if(ticketParams.UserId != null)
+                ticketParams.UserId = _tokenService.GetTokenClaim(ticketParams.UserId, "nameid");
+
             var tickets = await _repository.GetTickets(ticketParams);
 
             var ticketsToReturn = _mapper.Map<IEnumerable<TicketForListDto>>(tickets);
@@ -114,6 +123,65 @@ namespace servicer.API.Controllers
             await _repository.SaveAll();
 
             return Ok();
+        }
+
+        [HttpPost("{id}/pickup")]
+        public async Task<IActionResult> PickUpTicket(int id, TokenDto tokenDto)
+        {
+            var token = tokenDto.Token;
+            if (_tokenService.IsTokenExpired(token))            
+                return BadRequest("Token wygasł.");
+            
+
+            var tokenId = _tokenService.GetTokenClaim(token, "nameid");
+            var ticket = await _repository.GetTicket(id);
+            await _repository.ChangeOwnerTicket(ticket , Int32.Parse(tokenId));
+            await _repository.SetStatus(ticket);
+            await _repository.SaveAll();
+
+            var emailAddress = await _repository.GetEmailAddressByItemId(ticket.Item.Id);            
+            var user = await _repository.GetUser(Int32.Parse(tokenId));
+            _emailService.SendEmailMessage(
+                emailAddress,
+                "Podjęto zgłoszenie: "+ticket.Id,
+                "<p> Zgłoszenie "+ ticket.Id + " zostało podjęte przez użytkownika "+ user.Person.FirstName +" "+ user.Person.LastName +
+                ". Możesz skontaktować się z nim pod numerem telefonu: "+ user.Person.Phone + " lub mailowo: "+ user.Person.Email+ "</p>",
+                ""
+            );
+
+            return Ok(new
+            {
+                message = "Wysłano maila."
+            });
+        }
+
+         [HttpPost("{id}/close")]
+        public async Task<IActionResult> CloseTicket(int id, TokenDto tokenDto)
+        {
+            var token = tokenDto.Token;
+            if (_tokenService.IsTokenExpired(token))            
+                return BadRequest("Token wygasł.");            
+
+            var tokenId = _tokenService.GetTokenClaim(token, "nameid");
+            var ticket = await _repository.GetTicket(id);
+            
+            await _repository.CloseTicket(ticket);
+            await _repository.SaveAll();
+
+            var emailAddress = await _repository.GetEmailAddressByItemId(ticket.Item.Id);            
+            var user = await _repository.GetUser(Int32.Parse(tokenId));
+            _emailService.SendEmailMessage(
+                emailAddress,
+                "Twoje zgłoszenie zostało rozwiązane. Zapraszamy po odbiór sprzętu. ",
+                "<p> Zgłoszenie o numerze id: "+ ticket.Id + " zostało rozwiązane przez użytkownika "+ user.Person.FirstName +" "+ user.Person.LastName +
+                ". W razie jakichkolwiek pytań proszę skontaktować się z nim pod numerem telefonu: "+ user.Person.Phone + " lub mailowo: "+ user.Person.Email+ "</p>",
+                ""
+            );
+
+            return Ok(new
+            {
+                message = "Wysłano maila."
+            });
         }
     }
 }
