@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Authorization;
 using System;
 using servicer.API.Helpers;
 using servicer.API.Services;
-using System.Security.Claims;
 
 namespace servicer.API.Controllers
 {
@@ -28,7 +27,7 @@ namespace servicer.API.Controllers
             _repository = repository;
             _mapper = mapper;
             _tokenService = tokenService;
-             _emailService = emailService;
+            _emailService = emailService;
         }
 
         [AllowAnonymous]
@@ -80,8 +79,8 @@ namespace servicer.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTickets([FromQuery]TicketParams ticketParams)
         {
-            if(ticketParams.UserId != null)
-                ticketParams.UserId = _tokenService.GetTokenClaim(ticketParams.UserId, "nameid");
+            if(ticketParams.Token != null)
+                ticketParams.Token = _tokenService.GetTokenClaim(ticketParams.Token, "nameid");
 
             var tickets = await _repository.GetTickets(ticketParams);
 
@@ -129,23 +128,23 @@ namespace servicer.API.Controllers
         public async Task<IActionResult> PickUpTicket(int id, TokenDto tokenDto)
         {
             var token = tokenDto.Token;
-            if (_tokenService.IsTokenExpired(token))            
+            if (_tokenService.IsTokenExpired(token))
                 return BadRequest("Token wygasł.");
             
 
             var tokenId = _tokenService.GetTokenClaim(token, "nameid");
             var ticket = await _repository.GetTicket(id);
-            await _repository.ChangeOwnerTicket(ticket , Int32.Parse(tokenId));
-            await _repository.SetStatus(ticket);
+            ticket.UserId = Int32.Parse(tokenId);
+            ticket.Status = Status.WorkedOn;
             await _repository.SaveAll();
 
-            var emailAddress = await _repository.GetEmailAddressByItemId(ticket.Item.Id);            
+            var customerEmailAddress = ticket.Item.Customer.Person.Email;
             var user = await _repository.GetUser(Int32.Parse(tokenId));
             _emailService.SendEmailMessage(
-                emailAddress,
+                customerEmailAddress,
                 "Podjęto zgłoszenie: "+ticket.Id,
                 "<p> Zgłoszenie "+ ticket.Id + " zostało podjęte przez użytkownika "+ user.Person.FirstName +" "+ user.Person.LastName +
-                ". Możesz skontaktować się z nim pod numerem telefonu: "+ user.Person.Phone + " lub mailowo: "+ user.Person.Email+ "</p>",
+                ". Możesz skontaktować się z nim pod numerem telefonu: "+ user.Person.Phone + " lub mailowo: "+ user.Person.Email+ ".</p>",
                 ""
             );
 
@@ -155,26 +154,24 @@ namespace servicer.API.Controllers
             });
         }
 
-         [HttpPost("{id}/close")]
+        [HttpPost("{id}/close")]
         public async Task<IActionResult> CloseTicket(int id, TokenDto tokenDto)
         {
             var token = tokenDto.Token;
-            if (_tokenService.IsTokenExpired(token))            
-                return BadRequest("Token wygasł.");            
+            if (_tokenService.IsTokenExpired(token))
+                return BadRequest("Token wygasł.");
 
             var tokenId = _tokenService.GetTokenClaim(token, "nameid");
             var ticket = await _repository.GetTicket(id);
             
             await _repository.CloseTicket(ticket);
-            await _repository.SaveAll();
-
-            var emailAddress = await _repository.GetEmailAddressByItemId(ticket.Item.Id);            
+            var customerEmailAddress = ticket.Item.Customer.Person.Email;
             var user = await _repository.GetUser(Int32.Parse(tokenId));
             _emailService.SendEmailMessage(
-                emailAddress,
-                "Twoje zgłoszenie zostało rozwiązane. Zapraszamy po odbiór sprzętu. ",
-                "<p> Zgłoszenie o numerze id: "+ ticket.Id + " zostało rozwiązane przez użytkownika "+ user.Person.FirstName +" "+ user.Person.LastName +
-                ". W razie jakichkolwiek pytań proszę skontaktować się z nim pod numerem telefonu: "+ user.Person.Phone + " lub mailowo: "+ user.Person.Email+ "</p>",
+                customerEmailAddress,
+                "Twoje zgłoszenie zostało rozwiązane. Zapraszamy po odbiór sprzętu.",
+                "<p>Zgłoszenie o numerze id: " + ticket.Id + " zostało rozwiązane przez użytkownika " + user.Person.FirstName + " " + user.Person.LastName + 
+                "." + "W razie jakichkolwiek pytań proszę skontaktować się z nim pod numerem telefonu: " + user.Person.Phone + " lub mailowo: " + user.Person.Email + ".</p>",
                 ""
             );
 
