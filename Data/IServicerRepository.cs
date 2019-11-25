@@ -28,6 +28,11 @@ namespace servicer.API.Data
         Task<IEnumerable<Note>> GetNotes();
         Task<Note> GetNote(int id);
         Task<Note> CreateNote(Note note);
+        Task<IEnumerable<Note>> GetTicketNotes(int ticketId);
+        Task<IEnumerable<Note>> GetCustomerNotes(int customerId);
+        Task<IEnumerable<Note>> GetItemNotes(int itemId);
+        Task<IEnumerable<Note>> GetProductSpecificationNotes(int productSpecificationId);
+        Task DeleteNote(int id);
         Task CloseTicket(Ticket ticket);
     }
 }

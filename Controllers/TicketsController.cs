@@ -97,6 +97,18 @@ namespace servicer.API.Controllers
             var ticket = await _repository.GetTicket(id);
             var ticketToReturn = _mapper.Map<TicketForDetailDto>(ticket);
 
+            var ticketNotes = await _repository.GetTicketNotes(id);
+            ticketToReturn.TicketNotes = _mapper.Map<ICollection<NoteForDetailDto>>(ticketNotes);
+
+            var customerNotes = await _repository.GetCustomerNotes(ticket.Item.CustomerId);
+            ticketToReturn.CustomerNotes = _mapper.Map<ICollection<NoteForDetailDto>>(customerNotes);
+
+            var itemNotes = await _repository.GetItemNotes(ticket.ItemId);
+            ticketToReturn.ItemNotes = _mapper.Map<ICollection<NoteForDetailDto>>(itemNotes);
+
+            var productSpecificationNotes = await _repository.GetProductSpecificationNotes(ticket.Item.ProductSpecificationId);
+            ticketToReturn.ProductSpecificationNotes = _mapper.Map<ICollection<NoteForDetailDto>>(productSpecificationNotes);
+
             return Ok(ticketToReturn);
         }
 

@@ -11,5 +11,7 @@ namespace servicer.API.Dtos
         public int? ItemId { get; set; }
 
         public int? CustomerId { get; set; }
+
+        public int? TicketId { get; set; }
     }
 }

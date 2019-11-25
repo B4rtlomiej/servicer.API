@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace servicer.API.Models
@@ -33,6 +34,8 @@ namespace servicer.API.Models
         public User User { get; set; }
 
         public int? UserId { get; set; }
+
+        public ICollection<Note> Notes { get; set; }
 
         public Ticket()
         {
