@@ -1,5 +1,4 @@
 using System;
-using servicer.API.Models;
 
 namespace servicer.API.Dtos
 {

@@ -14,7 +14,6 @@ namespace servicer.API.Data
         Task<PagedList<User>> GetUsers(UserParams userParams);
         Task<User> GetUser(int id);
         Task<User> GetUser(string username);
-        Task<User> GetInactiveUser(string username);
         Task ChangeIsActive(User user);
         Task<PagedList<Ticket>> GetTickets(TicketParams ticketParams);
         Task<Ticket> GetTicket(int id);
@@ -29,5 +28,6 @@ namespace servicer.API.Data
         Task<IEnumerable<Note>> GetNotes();
         Task<Note> GetNote(int id);
         Task<Note> CreateNote(Note note);
+        Task CloseTicket(Ticket ticket);
     }
 }

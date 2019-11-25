@@ -10,8 +10,8 @@ namespace servicer.API.Helpers
             get { return pageSize; }
             set { pageSize = (value > MaxPageSize) ? MaxPageSize : value; }
         }
-        public string isActive { get; set; } = "active";
-        public string column { get; set; }
-        public string sorting { get; set; }
+        public string IsActive { get; set; } = "active";
+        public string Column { get; set; }
+        public string Sorting { get; set; }
     }
 }

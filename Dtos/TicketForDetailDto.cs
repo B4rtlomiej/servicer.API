@@ -1,6 +1,5 @@
 using System;
 using servicer.API.Models;
-using Type = servicer.API.Models.Type;
 
 namespace servicer.API.Dtos
 {
