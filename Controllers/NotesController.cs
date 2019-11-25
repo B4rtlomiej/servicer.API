@@ -66,5 +66,13 @@ namespace servicer.API.Controllers
 
             throw new Exception($"Błąd przy edytowaniu notatki o id: {id}.");
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await _repository.DeleteNote(id);
+
+            return NoContent();
+        }
     }
 }

@@ -239,5 +239,39 @@ namespace servicer.API.Data
 
             return note;
         }
+
+        public async Task<IEnumerable<Note>> GetTicketNotes(int ticketId)
+        {
+            var notes = await _context.Notes.Where(n => n.TicketId == ticketId).ToListAsync();
+
+            return notes;
+        }
+
+        public async Task<IEnumerable<Note>> GetCustomerNotes(int customerId)
+        {
+            var notes = await _context.Notes.Where(n => n.CustomerId == customerId).ToListAsync();
+
+            return notes;
+        }
+
+        public async Task<IEnumerable<Note>> GetItemNotes(int itemId)
+        {
+            var notes = await _context.Notes.Where(n => n.ItemId == itemId).ToListAsync();
+
+            return notes;
+        }
+
+        public async Task<IEnumerable<Note>> GetProductSpecificationNotes(int productSpecificationId)
+        {
+            var notes = await _context.Notes.Where(n => n.ProductSpecificationId == productSpecificationId).ToListAsync();
+
+            return notes;
+        }
+
+        public async Task DeleteNote(int id)
+        {
+            var noteToRemove = await GetNote(id);
+            _context.Notes.Remove(noteToRemove);
+        }
     }
 }
