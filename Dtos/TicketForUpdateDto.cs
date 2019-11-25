@@ -1,5 +1,4 @@
 using System;
-using servicer.API.Models;
 
 namespace servicer.API.Dtos
 {
@@ -12,6 +11,5 @@ namespace servicer.API.Dtos
         public DateTime Closed { get; set; }
         public string Subject { get; set; }
         public string Description { get; set; }
-        //public Item Item { get; set; }
     }
 }

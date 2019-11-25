@@ -38,21 +38,16 @@ namespace servicer.API.Data
             return await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
         }
 
-        public async Task<User> GetInactiveUser(string username)
-        {
-            return await _context.Users.FirstOrDefaultAsync(x => x.Username == username && !x.IsActive);
-        }
-
         public async Task<PagedList<User>> GetUsers(UserParams userParams)
         {
             var users = _context.Users.Include(p => p.Person).OrderByDescending(u => u.LastActive).AsQueryable();
 
-            users = users.Where(u => u.UserRole == userParams.userRole);
-            users = users.Where(u => u.IsActive == userParams.isActive);
+            users = users.Where(u => u.UserRole == userParams.UserRole);
+            users = users.Where(u => u.IsActive == userParams.IsActive);
 
-            if (!string.IsNullOrEmpty(userParams.orderBy) && userParams.orderBy == "lastActive")
+            if (!string.IsNullOrEmpty(userParams.OrderBy) && userParams.OrderBy == "lastActive")
                 users = users.OrderByDescending(u => u.LastActive);
-            if (!string.IsNullOrEmpty(userParams.orderBy) && userParams.orderBy == "lastCreated")
+            if (!string.IsNullOrEmpty(userParams.OrderBy) && userParams.OrderBy == "lastCreated")
                 users = users.OrderByDescending(u => u.Created);
 
             return await PagedList<User>.CreateAsync(users, userParams.PageNumber, userParams.PageSize);
@@ -66,13 +61,20 @@ namespace servicer.API.Data
 
         public async Task<PagedList<Ticket>> GetTickets(TicketParams ticketParams)
         {
-            var tickets = _context.Tickets.Include(t => t.Item).Include(ps => ps.Item.ProductSpecification).Include(c => c.Item.Customer).AsQueryable();
+            var tickets = _context.Tickets
+                                    .Include(t => t.Item)
+                                    .Include(ps => ps.Item.ProductSpecification)
+                                    .Include(c => c.Item.Customer)
+                                    .Include(u => u.User).AsQueryable();
+            
+            if (ticketParams.Token != null)
+                tickets = tickets.Where(u => u.UserId == Convert.ToInt32(ticketParams.Token));                       
 
-            tickets = tickets.Where(t => t.Priority == ticketParams.priority);
-            tickets = tickets.Where(t => t.Status == ticketParams.status);
-            if (!string.IsNullOrEmpty(ticketParams.orderBy) && ticketParams.orderBy == "lastOpen")
+            tickets = tickets.Where(t => t.Priority == ticketParams.Priority);
+            tickets = tickets.Where(t => t.Status == ticketParams.Status);
+            if (!string.IsNullOrEmpty(ticketParams.OrderBy) && ticketParams.OrderBy == "lastOpen")
                 tickets = tickets.OrderByDescending(u => u.Created);
-            if (!string.IsNullOrEmpty(ticketParams.orderBy) && ticketParams.orderBy == "lastClosed")
+            if (!string.IsNullOrEmpty(ticketParams.OrderBy) && ticketParams.OrderBy == "lastClosed")
                 tickets = tickets.OrderByDescending(u => u.Closed);
 
             return await PagedList<Ticket>.CreateAsync(tickets, ticketParams.PageNumber, ticketParams.PageSize);
@@ -109,34 +111,34 @@ namespace servicer.API.Data
         {
             var productSpecifications = _context.ProductSpecifications.OrderBy(p =>p.Name).AsQueryable();
 
-            if (!string.IsNullOrEmpty(productParams.isActive))
+            if (!string.IsNullOrEmpty(productParams.IsActive))
             {
-                if (productParams.isActive == "active")                
+                if (productParams.IsActive == "active")                
                     productSpecifications = productSpecifications.Where(p => p.IsActive == true);
                 else
                     productSpecifications = productSpecifications.Where(p => p.IsActive == false);
             }
             
 
-            if(!string.IsNullOrEmpty(productParams.column) && productParams.column == "name" && !string.IsNullOrEmpty(productParams.sorting))
+            if(!string.IsNullOrEmpty(productParams.Column) && productParams.Column == "name" && !string.IsNullOrEmpty(productParams.Sorting))
             {
-                if(productParams.sorting =="ascending")
+                if(productParams.Sorting =="ascending")
                     productSpecifications = productSpecifications.OrderBy(p =>p.Name);
                 else
                     productSpecifications = productSpecifications.OrderByDescending(p =>p.Name);
             }
 
-            if(!string.IsNullOrEmpty(productParams.column) && productParams.column == "series" && !string.IsNullOrEmpty(productParams.sorting))
+            if(!string.IsNullOrEmpty(productParams.Column) && productParams.Column == "series" && !string.IsNullOrEmpty(productParams.Sorting))
             {
-                if(productParams.sorting =="ascending")
+                if(productParams.Sorting =="ascending")
                     productSpecifications = productSpecifications.OrderBy(p =>p.Series);
                 else
                     productSpecifications = productSpecifications.OrderByDescending(p =>p.Series);
             }
 
-            if(!string.IsNullOrEmpty(productParams.column) && productParams.column == "manufacturer" && !string.IsNullOrEmpty(productParams.sorting))
+            if(!string.IsNullOrEmpty(productParams.Column) && productParams.Column == "manufacturer" && !string.IsNullOrEmpty(productParams.Sorting))
             {
-                if(productParams.sorting =="ascending")
+                if(productParams.Sorting =="ascending")
                     productSpecifications = productSpecifications.OrderBy(p =>p.Manufacturer);
                 else
                     productSpecifications = productSpecifications.OrderByDescending(p =>p.Manufacturer);
@@ -272,6 +274,13 @@ namespace servicer.API.Data
         {
             var noteToRemove = await GetNote(id);
             _context.Notes.Remove(noteToRemove);
+        }
+
+        public async Task CloseTicket(Ticket ticket)
+        {
+            ticket.Status = Status.Closed;
+            ticket.Closed = DateTime.Now;
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -15,6 +15,6 @@ namespace servicer.API.Dtos
 
         public Person Person { get; set; }
         
-         public bool IsActive { get; set; }
+        public bool IsActive { get; set; }
     }
 }

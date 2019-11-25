@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using servicer.API.Models;
@@ -11,13 +10,11 @@ namespace servicer.API.Data
         public AuthRepository(DataContext context)
         {
             _context = context;
-
         }
 
         public async Task<User> Login(string username, string password)
         {
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
-
             if (user == null)
             {
                 return null;
