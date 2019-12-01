@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using System;
 using servicer.API.Helpers;
 using servicer.API.Services;
+using System.Security.Claims;
 
 namespace servicer.API.Controllers
 {
@@ -43,7 +44,7 @@ namespace servicer.API.Controllers
 
             if (productSpecificationId == null)
             {
-                return BadRequest("Wybrany produkt nie istnieje, bądź nie jest aktywny.");
+                return BadRequest("Wybrany produkt nie istnieje, lub nie jest aktywny.");
             }
 
             ticketToCreate.Item.ProductSpecificationId = (int)productSpecificationId;
@@ -115,9 +116,13 @@ namespace servicer.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTicket(int id, TicketForUpdateDto ticketForUpdate)
         {
-            // TODO: admin/manager/owner
-
             var ticketFromRepo = await _repository.GetTicket(id);
+
+            if (ticketFromRepo.UserId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)
+                && UserRole.Admin.ToString() != User.FindFirst(ClaimTypes.Role).Value.ToString())
+            {
+                return Unauthorized();
+            }
 
             _mapper.Map(ticketForUpdate, ticketFromRepo);
 
@@ -127,6 +132,7 @@ namespace servicer.API.Controllers
             throw new Exception($"Błąd przy edytowaniu zgłoszenia o id: {id}.");
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTicket(int id)
         {
@@ -142,7 +148,6 @@ namespace servicer.API.Controllers
             var token = tokenDto.Token;
             if (_tokenService.IsTokenExpired(token))
                 return BadRequest("Token wygasł.");
-            
 
             var tokenId = _tokenService.GetTokenClaim(token, "nameid");
             var ticket = await _repository.GetTicket(id);
@@ -175,7 +180,13 @@ namespace servicer.API.Controllers
 
             var tokenId = _tokenService.GetTokenClaim(token, "nameid");
             var ticket = await _repository.GetTicket(id);
-            
+
+            if (ticket.UserId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)
+                && UserRole.Admin.ToString() != User.FindFirst(ClaimTypes.Role).Value.ToString())
+            {
+                return Unauthorized();
+            }
+
             await _repository.CloseTicket(ticket);
             var customerEmailAddress = ticket.Item.Customer.Person.Email;
             var user = await _repository.GetUser(Int32.Parse(tokenId));
@@ -189,7 +200,7 @@ namespace servicer.API.Controllers
 
             return Ok(new
             {
-                message = "Wysłano maila."
+                message = "Zamknięto zgłoszenie i wysłano maila."
             });
         }
     }

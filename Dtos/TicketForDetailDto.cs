@@ -20,5 +20,6 @@ namespace servicer.API.Dtos
         public ICollection<NoteForDetailDto> ItemNotes { get; set; }
         public ICollection<NoteForDetailDto> ProductSpecificationNotes { get; set; }
         public Item Item { get; set; }
+        public User User { get; set; }
     }
 }
