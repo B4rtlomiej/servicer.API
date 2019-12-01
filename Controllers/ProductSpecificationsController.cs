@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +12,7 @@ using servicer.API.Models;
 namespace servicer.API.Controllers
 {
     [ServiceFilter(typeof(SetLastActive))]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductSpecificationsController : ControllerBase
@@ -60,11 +59,6 @@ namespace servicer.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProductSpecification(int id, ProductSpecificationForUpdateDto productSpecificationForUpdateDto)
         {
-            if (UserRole.Admin.ToString() != User.FindFirst(ClaimTypes.Role).Value.ToString())
-            {
-                return Unauthorized();
-            }
-
             var productSpecificationFromRepo = await _repository.GetProductSpecification(id);
             _mapper.Map(productSpecificationForUpdateDto, productSpecificationFromRepo);
 
@@ -77,11 +71,6 @@ namespace servicer.API.Controllers
         [HttpPut("{id}/changeisactive")]
         public async Task<IActionResult> ChangeIsActive(int id)
         {
-            if (UserRole.Admin.ToString() != User.FindFirst(ClaimTypes.Role).Value.ToString())
-            {
-                return Unauthorized();
-            }
-
             var productSpecificationToChangeIsActive = await _repository.GetProductSpecification(id);
             productSpecificationToChangeIsActive.IsActive = !productSpecificationToChangeIsActive.IsActive;
 
