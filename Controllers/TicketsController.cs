@@ -79,9 +79,9 @@ namespace servicer.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTickets([FromQuery]TicketParams ticketParams)
         {
-            if(ticketParams.Token != null)
+            if(!string.IsNullOrEmpty(ticketParams.Token))
                 ticketParams.Token = _tokenService.GetTokenClaim(ticketParams.Token, "nameid");
-
+               
             var tickets = await _repository.GetTickets(ticketParams);
 
             var ticketsToReturn = _mapper.Map<IEnumerable<TicketForListDto>>(tickets);
@@ -96,7 +96,7 @@ namespace servicer.API.Controllers
         {
             var ticket = await _repository.GetTicket(id);
             var ticketToReturn = _mapper.Map<TicketForDetailDto>(ticket);
-
+    
             var ticketNotes = await _repository.GetTicketNotes(id);
             ticketToReturn.TicketNotes = _mapper.Map<ICollection<NoteForDetailDto>>(ticketNotes);
 
@@ -175,7 +175,7 @@ namespace servicer.API.Controllers
 
             var tokenId = _tokenService.GetTokenClaim(token, "nameid");
             var ticket = await _repository.GetTicket(id);
-            
+    
             await _repository.CloseTicket(ticket);
             var customerEmailAddress = ticket.Item.Customer.Person.Email;
             var user = await _repository.GetUser(Int32.Parse(tokenId));
@@ -191,6 +191,18 @@ namespace servicer.API.Controllers
             {
                 message = "Wysłano maila."
             });
+        }
+
+        [HttpGet("customertickets")]
+        public async Task<IActionResult> CustomerTicket([FromQuery]TicketParams ticketParams)
+        {              
+            var tickets = await _repository.GetTickets(ticketParams);
+
+            var ticketsToReturn = _mapper.Map<IEnumerable<TicketForListDto>>(tickets);
+
+            Response.AddPagination(tickets.CurrentPage, tickets.PageSize, tickets.TotalCount, tickets.TotalPages);
+
+            return Ok(ticketsToReturn);
         }
     }
 }

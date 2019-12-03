@@ -34,5 +34,7 @@ namespace servicer.API.Data
         Task<IEnumerable<Note>> GetProductSpecificationNotes(int productSpecificationId);
         Task DeleteNote(int id);
         Task CloseTicket(Ticket ticket);
+        Task<PagedList<Person>> GetPersons(PersonParams personParams);
+        Task<Person> GetPerson(int id);
     }
 }
