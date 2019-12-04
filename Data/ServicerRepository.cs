@@ -126,7 +126,7 @@ namespace servicer.API.Data
         public async Task<Ticket> GetTicket(int id)
         {
             var ticket = await _context.Tickets.Include(t => t.Item).Include(ps => ps.Item.ProductSpecification).Include(c => c.Item.Customer)
-            .Include(per => per.Item.Customer.Person).FirstOrDefaultAsync(t => t.Id == id);
+            .Include(per => per.Item.Customer.Person).Include(u => u.User).Include(up => up.User.Person).FirstOrDefaultAsync(t => t.Id == id);
 
             return ticket;
         }
@@ -156,12 +156,11 @@ namespace servicer.API.Data
 
             if (!string.IsNullOrEmpty(productParams.IsActive))
             {
-                if (productParams.IsActive == "active")                
+                if (productParams.IsActive == "active")
                     productSpecifications = productSpecifications.Where(p => p.IsActive == true);
                 else
                     productSpecifications = productSpecifications.Where(p => p.IsActive == false);
             }
-            
 
             if(!string.IsNullOrEmpty(productParams.Column) && productParams.Column == "name" && !string.IsNullOrEmpty(productParams.Sorting))
             {

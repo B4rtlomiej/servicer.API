@@ -2,6 +2,7 @@ using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using servicer.API.Data;
@@ -32,6 +33,7 @@ namespace servicer.API.Controllers
             _configuration = configuration;
         }
 
+        // TODO: delete
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserForRegisterDto userForRegisterDto)
         {
@@ -82,6 +84,7 @@ namespace servicer.API.Controllers
             });
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("register/user")]
         public async Task<IActionResult> RegisterUser(UserForRegisterDto userForRegisterDto)
         {

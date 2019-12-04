@@ -32,6 +32,7 @@ namespace servicer.API.Controllers
             _mapper = mapper;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetUsers([FromQuery]UserParams userParams)
         {
@@ -43,6 +44,7 @@ namespace servicer.API.Controllers
             return Ok(usersToReturn);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id}", Name = "GetUser")]
         public async Task<IActionResult> GetUser(int id)
         {
@@ -74,6 +76,12 @@ namespace servicer.API.Controllers
         [HttpPost("{id}/resetpassword")]
         public async Task<IActionResult> ResetPassword(int id, TokenDto tokenDto)
         {
+            if (id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)
+                && UserRole.Admin.ToString() != User.FindFirst(ClaimTypes.Role).Value.ToString())
+            {
+                return Unauthorized();
+            }
+
             var token = tokenDto.Token;
 
             if (_tokenService.IsTokenExpired(token))
@@ -89,6 +97,11 @@ namespace servicer.API.Controllers
             if (tokenRole != UserRole.Admin.ToString() && tokenId != id.ToString())
             {
                 return Unauthorized();
+            }
+
+            if (!userToResetPassword.IsActive)
+            {
+                return BadRequest("Użytkownik nieaktywny.");
             }
 
             string resetPasswordToken = _tokenService.CreateToken(new[]
@@ -111,6 +124,7 @@ namespace servicer.API.Controllers
             });
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("{id}/changeisactive")]
         public async Task<IActionResult> ChangeIsActive(int id, TokenDto tokenDto)
         {
