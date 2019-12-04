@@ -1,4 +1,4 @@
-using servicer.API.Models;
+using System.Collections.Generic;
 
 namespace servicer.API.Dtos
 {
@@ -18,6 +18,6 @@ namespace servicer.API.Dtos
 
         public int? CustomerId { get; set; }
 
-        public Address Address { get; set; }
+        public ICollection<NoteForDetailDto> CustomerNotes { get; set; }
     }
 }

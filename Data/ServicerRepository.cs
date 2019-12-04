@@ -123,6 +123,14 @@ namespace servicer.API.Data
             return await PagedList<Ticket>.CreateAsync(tickets, ticketParams.PageNumber, ticketParams.PageSize);
         }
 
+        public async Task<int> GetCustomerIdByPersonId(int personId)
+        {
+                var customers = _context.Customers.Include(c => c.Person);
+                var customer = customers.FirstOrDefault(c => c.Person.Id == personId);
+
+            return customer.Id;
+        }
+
         public async Task<Ticket> GetTicket(int id)
         {
             var ticket = await _context.Tickets.Include(t => t.Item).Include(ps => ps.Item.ProductSpecification).Include(c => c.Item.Customer)

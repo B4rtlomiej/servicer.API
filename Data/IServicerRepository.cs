@@ -36,5 +36,6 @@ namespace servicer.API.Data
         Task CloseTicket(Ticket ticket);
         Task<PagedList<Person>> GetPersons(PersonParams personParams);
         Task<Person> GetPerson(int id);
+        Task<int> GetCustomerIdByPersonId(int personId);
     }
 }
