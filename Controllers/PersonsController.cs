@@ -42,7 +42,7 @@ namespace servicer.API.Controllers
             var person = await _repository.GetPerson(id);
             var personToReturn = _mapper.Map<PersonForDetailDto>(person);
 
-            var customerId = await _repository.GetCustomerIdByPersonId(id);
+            var customerId = _repository.GetCustomerIdByPersonId(id);
             var customerNotes = await _repository.GetCustomerNotes(customerId);
             personToReturn.CustomerNotes = _mapper.Map<ICollection<NoteForDetailDto>>(customerNotes);
 
