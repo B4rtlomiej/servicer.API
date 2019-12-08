@@ -53,6 +53,38 @@ namespace servicer.API.Data
             return await PagedList<User>.CreateAsync(users, userParams.PageNumber, userParams.PageSize);
         }
 
+         public async Task<PagedList<Person>> GetPersons(PersonParams personParams)
+        {
+            var persons = _context.People.Where(p => p.CustomerId != null).AsQueryable();
+            if(!string.IsNullOrEmpty(personParams.Column)) {
+                if(personParams.Column == "firstName" && !string.IsNullOrEmpty(personParams.Sorting))
+                {
+                    if(personParams.Sorting =="ascending")
+                        persons = persons.OrderBy(p =>p.FirstName);
+                    else
+                        persons = persons.OrderByDescending(p =>p.FirstName);
+                }
+
+                if(personParams.Column == "lastName" && !string.IsNullOrEmpty(personParams.Sorting))
+                {
+                    if(personParams.Sorting =="ascending")
+                        persons = persons.OrderBy(p =>p.LastName);
+                    else
+                        persons = persons.OrderByDescending(p =>p.LastName);
+                }
+
+                if(personParams.Column == "email" && !string.IsNullOrEmpty(personParams.Sorting))
+                {
+                    if(personParams.Sorting =="ascending")
+                        persons = persons.OrderBy(p =>p.Email);
+                    else
+                        persons = persons.OrderByDescending(p =>p.Email);
+            }
+            }
+
+            return await PagedList<Person>.CreateAsync(persons, personParams.PageNumber, personParams.PageSize);
+        }
+            
         public async Task ChangeIsActive(User user)
         {
             user.IsActive = !user.IsActive;
@@ -67,17 +99,36 @@ namespace servicer.API.Data
                                     .Include(c => c.Item.Customer)
                                     .Include(u => u.User).AsQueryable();
             
-            if (ticketParams.Token != null)
-                tickets = tickets.Where(u => u.UserId == Convert.ToInt32(ticketParams.Token));                       
-
-            tickets = tickets.Where(t => t.Priority == ticketParams.Priority);
-            tickets = tickets.Where(t => t.Status == ticketParams.Status);
+            if (ticketParams.PersonId != 0)
+            {
+                var customers = _context.Customers.Include(c => c.Person);
+                var customer = customers.FirstOrDefault(c => c.Person.Id == ticketParams.PersonId);
+                if(customer !=null)
+                  tickets = tickets.Where(t => t.Item.CustomerId == customer.Id);
+            }
+            else 
+            {
+            if (!string.IsNullOrEmpty(ticketParams.Token))
+                tickets = tickets.Where(t => t.UserId == Convert.ToInt32(ticketParams.Token));                       
+           
             if (!string.IsNullOrEmpty(ticketParams.OrderBy) && ticketParams.OrderBy == "lastOpen")
                 tickets = tickets.OrderByDescending(u => u.Created);
             if (!string.IsNullOrEmpty(ticketParams.OrderBy) && ticketParams.OrderBy == "lastClosed")
                 tickets = tickets.OrderByDescending(u => u.Closed);
 
+            tickets = tickets.Where(t => t.Priority == ticketParams.Priority);
+            tickets = tickets.Where(t => t.Status == ticketParams.Status);
+            }
+
             return await PagedList<Ticket>.CreateAsync(tickets, ticketParams.PageNumber, ticketParams.PageSize);
+        }
+
+        public int GetCustomerIdByPersonId(int personId)
+        {
+            var customers = _context.Customers.Include(c => c.Person);
+            var customer = customers.FirstOrDefault(c => c.Person.Id == personId);
+
+            return customer.Id;
         }
 
         public async Task<Ticket> GetTicket(int id)
@@ -199,7 +250,7 @@ namespace servicer.API.Data
 
             return id;
         }
-
+        
         public async Task<int?> GetItemId(int productSpecificationId, int customerId, DateTime productionYear)
         {
             var item = await _context.Items.FirstOrDefaultAsync(i =>
@@ -280,6 +331,13 @@ namespace servicer.API.Data
             ticket.Status = Status.Closed;
             ticket.Closed = DateTime.Now;
             await _context.SaveChangesAsync();
+        }
+
+       public async Task<Person> GetPerson(int id)
+        {
+            var ticket = await _context.People.FirstOrDefaultAsync(p => p.Id == id);
+
+            return ticket;
         }
     }
 }
