@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using servicer.API.Helpers;
 using servicer.API.Models;
 
@@ -338,6 +339,43 @@ namespace servicer.API.Data
             var ticket = await _context.People.FirstOrDefaultAsync(p => p.Id == id);
 
             return ticket;
+        }
+
+        public string GetAgentsWithMostClosedTickets()
+        {
+            var queryLastNames =
+                (from ticket in _context.Tickets
+                where ticket.UserId != null
+                group ticket by new {ticket.UserId, ticket.User.Person.FirstName, ticket.User.Person.LastName} into newGroup
+                orderby newGroup.Count() descending
+                select new
+                {
+                    UserId = newGroup.Key.UserId,
+                    FirstName = newGroup.Key.FirstName,
+                    LastName = newGroup.Key.LastName,
+                    TicketCount = newGroup.Count()
+                }).Take(5);
+
+           return JsonConvert.SerializeObject(queryLastNames);
+        }
+
+        public string GetProductsWithMostTickets()
+        {
+            var queryProductsWithMostTickets =
+                (from ticket in _context.Tickets
+                group ticket by new {ticket.Item.ProductSpecificationId, ticket.Item.ProductSpecification.Manufacturer,
+                    ticket.Item.ProductSpecification.Series, ticket.Item.ProductSpecification.Name} into newGroup
+                orderby newGroup.Count() descending
+                select new
+                {
+                    ProductSpecificationId = newGroup.Key.ProductSpecificationId,
+                    Manufacturer = newGroup.Key.Manufacturer,
+                    Series = newGroup.Key.Series,
+                    Name = newGroup.Key.Name,
+                    TicketCount = newGroup.Count()
+                }).Take(5);
+
+           return JsonConvert.SerializeObject(queryProductsWithMostTickets);
         }
     }
 }

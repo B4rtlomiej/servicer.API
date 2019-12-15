@@ -37,5 +37,7 @@ namespace servicer.API.Data
         Task<PagedList<Person>> GetPersons(PersonParams personParams);
         Task<Person> GetPerson(int id);
         int GetCustomerIdByPersonId(int personId);
+        string GetAgentsWithMostClosedTickets();
+        string GetProductsWithMostTickets();
     }
 }
