@@ -33,26 +33,6 @@ namespace servicer.API.Controllers
             _configuration = configuration;
         }
 
-        // TODO: delete
-        [HttpPost("register")]
-        public async Task<IActionResult> Register(UserForRegisterDto userForRegisterDto)
-        {
-            userForRegisterDto.Username = userForRegisterDto.Username.ToLower();
-
-            if (await _repository.UserExists(userForRegisterDto.Username))
-            {
-                return BadRequest("Login zajęty.");
-            }
-
-            var userToCreate = _mapper.Map<User>(userForRegisterDto);
-
-            var createdUser = await _repository.Register(userToCreate);
-            var userToReturn = _mapper.Map<UserForDetailDto>(createdUser);
-
-            return CreatedAtRoute("GetUser", new { controller = "Users", id = createdUser.Id }, userToReturn);
-        }
-
-
         [HttpPost("setpassword")]
         public async Task<ActionResult> Register(PasswordsForPasswordSetDto passwordsForPasswordSet)
         {

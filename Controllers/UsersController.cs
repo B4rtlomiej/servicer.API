@@ -65,12 +65,13 @@ namespace servicer.API.Controllers
 
             var userFromRepo = await _repository.GetUser(id);
 
-            _mapper.Map(userForUpdateDto, userFromRepo);
-
-            if (await _repository.SaveAll())
+            try {
+                _mapper.Map(userForUpdateDto, userFromRepo);
+                await _repository.SaveAll();
                 return NoContent();
-
-            throw new Exception($"Błąd przy edytowaniu użytkownika o id: {id}.");
+            } catch (Exception) {
+                return NoContent();
+            }
         }
 
         [HttpPost("{id}/resetpassword")]

@@ -124,12 +124,13 @@ namespace servicer.API.Controllers
                 return Unauthorized();
             }
 
-            _mapper.Map(ticketForUpdate, ticketFromRepo);
-
-            if (await _repository.SaveAll())
+            try {
+                _mapper.Map(ticketForUpdate, ticketFromRepo);
+                await _repository.SaveAll();
                 return NoContent();
-
-            throw new Exception($"Błąd przy edytowaniu zgłoszenia o id: {id}.");
+            } catch (Exception) {
+                return NoContent();
+            }
         }
 
         [Authorize(Roles = "Admin")]

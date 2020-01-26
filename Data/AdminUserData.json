@@ -1,0 +1,12 @@
+{
+    "username": "administrator",
+    "password": "thepassword123",
+    "person": {
+        "firstName": "Użytkownik",
+        "lastName": "Administrator",
+        "email": "test@email.com",
+        "phone": "123456789"
+    },
+    "userRole": "Admin",
+    "isActive": true
+}

@@ -3,11 +3,10 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using servicer.API.Data;
 using Microsoft.AspNetCore.Authorization;
-using servicer.API.Helpers;
 
 namespace servicer.API.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ReportsController : ControllerBase
@@ -26,10 +25,14 @@ namespace servicer.API.Controllers
         {
             var agentsWithMostClosedTickets = _repository.GetAgentsWithMostClosedTickets();
             var productsWithMostTickets = _repository.GetProductsWithMostTickets();
+            var ticketsByMonths = _repository.GetTicketsByMonths();
+            var closedTicketsByMonths = _repository.GetClosedTicketsByMonths();
 
             return Ok(new {
                 agentTickets = agentsWithMostClosedTickets,
-                productTickets = productsWithMostTickets
+                productTickets = productsWithMostTickets,
+                ticketsByMonths = ticketsByMonths,
+                closedTicketsByMonths = closedTicketsByMonths
             });
         }
     }

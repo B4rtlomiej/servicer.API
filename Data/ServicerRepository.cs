@@ -156,6 +156,8 @@ namespace servicer.API.Data
         public async Task DeleteTicket(int id)
         {
             var ticketToRemove = await GetTicket(id);
+            var notes = await GetTicketNotes(ticketToRemove.Id);
+            _context.Notes.RemoveRange(notes);
             _context.Tickets.Remove(ticketToRemove);
         }
 
@@ -376,6 +378,38 @@ namespace servicer.API.Data
                 }).Take(5);
 
            return JsonConvert.SerializeObject(queryProductsWithMostTickets);
+        }
+
+        public string GetTicketsByMonths()
+        {
+            var ticketByMonths =
+                (from ticket in _context.Tickets
+                where ticket.Created.Year == DateTime.Now.Year
+                group ticket by new {ticket.Created.Month, ticket.Created.Year} into newGroup
+                orderby newGroup.Key.Month ascending
+                select new
+                {
+                    Month = newGroup.Key.Month,
+                    TicketCount = newGroup.Count()
+                });
+
+           return JsonConvert.SerializeObject(ticketByMonths);
+        }
+
+        public string GetClosedTicketsByMonths()
+        {
+            var ticketByMonths =
+                (from ticket in _context.Tickets
+                where ticket.Created.Year == DateTime.Now.Year && ticket.Status == Status.Closed
+                group ticket by new {ticket.Id, ticket.Created.Month, ticket.Created.Year} into newGroup
+                orderby newGroup.Key.Month ascending
+                select new
+                {
+                    Month = newGroup.Key.Month,
+                    TicketCount = newGroup.Count()
+                });
+
+           return JsonConvert.SerializeObject(ticketByMonths);
         }
     }
 }

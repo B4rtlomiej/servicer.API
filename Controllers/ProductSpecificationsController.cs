@@ -60,12 +60,14 @@ namespace servicer.API.Controllers
         public async Task<IActionResult> UpdateProductSpecification(int id, ProductSpecificationForUpdateDto productSpecificationForUpdateDto)
         {
             var productSpecificationFromRepo = await _repository.GetProductSpecification(id);
-            _mapper.Map(productSpecificationForUpdateDto, productSpecificationFromRepo);
 
-            if (await _repository.SaveAll())
+            try {
+                _mapper.Map(productSpecificationForUpdateDto, productSpecificationFromRepo);
+                await _repository.SaveAll();
                 return NoContent();
-
-            throw new Exception($"Błąd przy edytowaniu produktu o id: {id}.");
+            } catch (Exception) {
+                return NoContent();
+            }
         }
 
         [HttpPut("{id}/changeisactive")]

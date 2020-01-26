@@ -39,5 +39,7 @@ namespace servicer.API.Data
         int GetCustomerIdByPersonId(int personId);
         string GetAgentsWithMostClosedTickets();
         string GetProductsWithMostTickets();
+        string GetTicketsByMonths();
+        string GetClosedTicketsByMonths();
     }
 }

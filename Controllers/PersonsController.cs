@@ -54,12 +54,13 @@ namespace servicer.API.Controllers
         {
             var personFromRepo = await _repository.GetPerson(id);
 
-            _mapper.Map(personForUpdate, personFromRepo);
-
-            if (await _repository.SaveAll())
+            try {
+                _mapper.Map(personForUpdate, personFromRepo);
+                await _repository.SaveAll();
                 return NoContent();
-
-            throw new Exception($"Błąd edycji persony o id: {id}.");
+            } catch (Exception) {
+                return NoContent();
+            }
         }
     }
 }

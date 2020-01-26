@@ -59,12 +59,14 @@ namespace servicer.API.Controllers
         public async Task<IActionResult> UpdateNote(int id, NoteForUpdateDto noteForUpdateDto)
         {
             var noteFromRepo = await _repository.GetNote(id);
-            _mapper.Map(noteForUpdateDto, noteFromRepo);
 
-            if (await _repository.SaveAll())
+            try {
+                _mapper.Map(noteForUpdateDto, noteFromRepo);
+                await _repository.SaveAll();
                 return NoContent();
-
-            throw new Exception($"Błąd przy edytowaniu notatki o id: {id}.");
+            } catch (Exception) {
+                return NoContent();
+            }
         }
 
         [HttpDelete("{id}")]
